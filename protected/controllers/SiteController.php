@@ -5,6 +5,7 @@ Yii::import('libs.NaPacks.Logo');
 Yii::import('libs.NaPacks.SaveModels');
 Yii::import('libs.NaPacks.Save');
 Yii::import('libs.NaPacks.WebApp');
+Yii::import('libs.Utils.Utils');
 
 class SiteController extends Controller
 {
@@ -387,8 +388,8 @@ class SiteController extends Controller
 					$model->denomination = $_POST['UsersRegisterForm']['denomination'];
 
 					if ($settings->version == '0000 0000'){
-						$settings->version = Utils::passwordGenerator(8);
-						Settings::save($settings,array('version'));
+						// $settings->version = Utils::passwordGenerator(8);
+						// Settings::save($settings,array('version'));
 
 						$model->id_users_type = 3; //UTENTE AMMINISTRATORE alla prima registrazine
 					}else{
@@ -422,7 +423,13 @@ class SiteController extends Controller
 						Settings::saveUser($model->id_user,$array); //creo il numero di mail inviate per approve/disclaim iscrizione
 						#exit;
 						//Invio mail all'user
-						NMail::SendMail('iscrizione',crypt::Encrypt($model->id_user),$model->email,$savedPassword,$model->activation_code);
+						if ($settings->version == '0000 0000'){
+							$settings->version = Utils::passwordGenerator(8);
+							Settings::save($settings,array('version'));
+							NMail::SendMail('signupAdmin',crypt::Encrypt($model->id_user),$model->email,$savedPassword,$model->activation_code);
+						}else{
+							NMail::SendMail('iscrizione',crypt::Encrypt($model->id_user),$model->email,$savedPassword,$model->activation_code);
+						}
 
 						//cerco tutti gli admin per inoltrare la mail di nuova iscrizione
 						$criteria=new CDbCriteria();
@@ -549,6 +556,7 @@ class SiteController extends Controller
 	{
 		$this->layout='//layouts/column_login';
 		$explode = explode(',',crypt::Decrypt($activation_code));
+
 		//$explode = explode(',',$activation_code);
 		$model=Users::model()->findByPk(crypt::Decrypt($explode[1]));
 

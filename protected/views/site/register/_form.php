@@ -321,20 +321,9 @@ Yii::app()->clientScript->registerScript('script', $script);
 
 
 		</div>
-    <div class="bg-secondary">
-      <h5 style="text-align:center; padding-top:20px;">I nostri supporter</h5>
 
-      <div class="row">
-          <div class="col" style="text-align:center;">
-              <img class='login-sponsor' src="<?php echo Yii::app()->request->baseUrl; ?>/css/images/logocomune.png" alt="" >
-          </div>
-          <div class="col" style="text-align:center;">
-              <img class='login-sponsor' width="100" height="100" src="<?php echo Yii::app()->request->baseUrl; ?>/css/images/parthenope.png" alt="" sizes="(max-width: 150px) 100vw, 150px">
-          </div>
-      </div>
+    <?php echo Logo::footer('#333'); ?>
 
-      <?php echo Logo::footer(); ?>
-    </div>
 	</div>
 
 

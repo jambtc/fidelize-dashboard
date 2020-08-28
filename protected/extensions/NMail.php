@@ -29,7 +29,7 @@ class NMail {
     $params['name']  = $model->name;
     $params['surname']  = $model->surname;
 
-    $filename = dirname(Yii::app()->getBasePath()) . '/css/images/invoice.png';
+    $filename = dirname(Yii::app()->getBasePath()) . '/css/images/logo.png';
 		$image = Swift_Image::fromPath($filename);
 		$logo = $message->embed($image);
 		$params['logo']  = $logo;
@@ -45,6 +45,10 @@ class NMail {
 
             case 'sin':
                 $subject = 'Codice Identificativo POS '.Yii::app()->params['shortName'];
+                break;
+
+            case 'signupAdmin':
+                $subject = Yii::t('notify','{application} - User signup',array('{application}'=>Yii::app()->params['shortName']));
                 break;
 
             case 'iscrizione':
