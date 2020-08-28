@@ -19,7 +19,7 @@ if (Yii::app()->user->objUser['privilegi'] >5 ){
 		}
 	}else{
 		$this->renderPartial('_dashboard',array(
-			'dataProvider'=>$dataProvider,
+			// 'dataProvider'=>$dataProvider,
 			'dataProviderTokens'=>$dataProviderTokens,
 			'warningmessage'=>$warningmessage,
 		));

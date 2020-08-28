@@ -197,35 +197,10 @@ class SiteController extends Controller
 		 	$criteria->compare('id_merchant',$merchants->id_merchant,false);
 		}
 
-		// carico la lista delle transazioni bitcoin
-		$dataProvider=new CActiveDataProvider('Transactions', array(
-			'sort'=>array(
-	    		'defaultOrder'=>array(
-	      			'invoice_timestamp'=>false
-	    		)
-	  		),
-		    'criteria'=>$criteria,
-		));
-
-		//carico la lista delle transazioni token
-		//carico il wallet selezionato nei settings
-		// $settings=Settings::loadUser(Yii::app()->user->objUser['id_user']);
-		// if (empty($settings->id_wallet)){
-		// 	$from_address = '0x0000000000000000000000000000000000000000';
-		// }else{
-		// 	$wallet = Wallets::model()->findByPk($settings->id_wallet);
-		// 	$from_address = $wallet->wallet_address;
-		// }
-
 		$criteriaTokens=new CDbCriteria;
 		if (Yii::app()->user->objUser['privilegi'] == 10){
 		 	$criteriaTokens->compare('id_user',Yii::app()->user->objUser['id_user'],false);
 		}
-		//$criteriaTokens->addInCondition('from_address',[$from_address]);
-		// $criteriaTokens->addInCondition('to_address',[$from_address],'OR');
-		// $criteriaTokens->compare('type','token',false);
-		// $criteriaTokens->compare('to_address',$from_address,false);
-
 
 		$dataProviderTokens=new CActiveDataProvider('PosInvoices', array(
 			'sort'=>array(
@@ -255,20 +230,14 @@ class SiteController extends Controller
 		$warningmessage = null;
 		if (isset(Yii::app()->user->objUser) && Yii::app()->user->objUser['privilegi'] == 10){
 
-			// verifico l'esistenza di un wallet token e in caso di assenza mostro l'avviso per collegarsi
-			$wallets = Wallets::model()->findByAttributes(array("id_user"=>Yii::app()->user->objUser['id_user']));
-			if (null === $wallets)
-				$warningmessage[] = $this->writeMessage('wallet');
-
-			// verifico se è in scadenza
-			$deadline = WebApp::StatoPagamenti(Yii::app()->user->objUser['id_user'],true);
-			if ($deadline >= -31-28){
-				$warningmessage[] = $this->writeMessage('deadline', 28+31 - $deadline);
-			}
+		// verifico l'esistenza di un wallet token e in caso di assenza mostro l'avviso per collegarsi
+		$wallets = Wallets::model()->findByAttributes(array("id_user"=>Yii::app()->user->objUser['id_user']));
+		if (null === $wallets)
+			$warningmessage[] = $this->writeMessage('wallet');
 		}
 
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			//'dataProvider'=>$dataProvider,
 			'dataProviderTokens'=>$dataProviderTokens,
 			'stores'=>$stores,
 			'pos'=>$pos,
