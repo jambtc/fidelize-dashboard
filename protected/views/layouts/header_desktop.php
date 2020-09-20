@@ -82,7 +82,7 @@ $posUrl = 'https://pos.' . Utils::get_domain($http_host) . '/index.php?r=site/in
 
                                     <div class="account-dropdown__item" style='display: <?php echo $visible[10]; ?>;'>
                                         <a href="<?php echo Yii::app()->createUrl('settings/index');?>">
-                                            <i class="fa fa-gear"></i>Impostazioni <?php if (Yii::app()->user->objUser['privilegi'] == 20) echo "Associazione"; ?></a>
+                                            <i class="fa fa-gear"></i>Impostazioni</a>
                                     </div>
 
                                 </div>

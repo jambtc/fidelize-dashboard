@@ -368,56 +368,7 @@ class UsersController extends Controller
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('index'));
 	}
-	/**
-	 * Mostra la lista degli utenti che sono in scadenza con i pagamenti
-	 * spiegazione giorni:
-	 * - x >17000 Nessun Pagamento
-	 * - 17000 < x > 46 Scaduta da x giorni
-	 * - x = 45 ultimo giorno di scadenza
-	 * - 0 < x > 45 Prossimo alla scadenza. Sono Questi che devono essere visualizzati per prima!!!
-	 * - x < 0 Sono negativi e pertanto sono in ordine con il pagamento!
-	 * - -45 < x Mancano 45 giorni alla scadenza
-	 */
-	public function actionReminder()
-	{
-		#echo "<pre>".print_r($_POST,true)."</pre>";
-		#exit;
-		if(isset($_POST['selectedReminder'])){
-			foreach ($_POST['selectedReminder'] as $x => $id_user){
-				//per salvare il numero di solleciti li devo prima caricare...
-				$sollecito = WebApp::ContaSollecitiPagamenti($id_user);
-				$sollecito ++;
-				// salvo il numero di solleciti inviati
-				Settings::saveUser($id_user,array('SollecitiPagamenti'=>$sollecito), $fields=array('SollecitiPagamenti'));
 
-				//invio la mail
-				$usersReminder=Users::model()->findByPk($id_user);
-				NMail::SendMail('sollecito',crypt::Encrypt($id_user),$usersReminder->email);
-			}
-		}
-		$criteria=new CDbCriteria();
-		$criteria->compare('status_activation_code',1,false);
-
-		//creo la lista degli utenti abilitati
-		$users = Users::model()->findAll($criteria);
-		$reminders = array();
-
-		// per ciascun utente verifico i pagamenti
-		foreach($users as $item) {
-			$timelapse = WebApp::StatoPagamenti($item->id_user,true);
-			if ($timelapse > -45 && $timelapse < 365){
-				$reminders[] = $item;
-			}
-		}
-
-		$dataProvider=new CActiveDataProvider('Users', array(
-			'data' => $reminders,
-		));
-
-		$this->render('reminder',array(
-			'dataProvider'=>$dataProvider, // non invio il dataProvider bensì il reminders appena creato sulla base delle scadenze dei pagamenti
-		));
-	}
 
 
 
@@ -426,56 +377,15 @@ class UsersController extends Controller
 	 */
 	public function actionIndex()
 	{
-		// $yearEnd = date('Y-m-d H:i', strtotime('last day of december'));
-
 		$modelc=new Users('search');
 		$modelc->unsetAttributes();
 
 		if(isset($_GET['Users']))
 			$modelc->attributes=$_GET['Users'];
 
-		// echo "<pre>".print_r($yearEnd,true)."</pre>";
-		// exit;
-
-
 		$this->render('index',array(
 			'modelc'=>$modelc,
 		));
-
-
-
-		// $criteria=new CDbCriteria();
-		// $criteria->compare('status_activation_code',1,false);
-		//
-		// //creo la lista degli utenti abilitati
-		// $users = Users::model()->findAll($criteria);
-		// $reminders = array();
-		// $limit = 44;
-		// if (isset($_GET['list']) && $_GET['list']=='all')
-		// 	$limit=-20000;
-		//
-		//
-		// // per ciascun utente verifico i pagamenti
-		// foreach($users as $item) {
-		// 	$timelapse = WebApp::StatoPagamenti($item->id_user,true);
-		// 	if ($timelapse < -$limit){
-		// 		$reminders[] = $item;
-		// 	}
-		// }
-		//
-		// $dataProvider=new CActiveDataProvider('Users', array(
-		// 	'data' => $reminders,
-		// 	'sort'=>array(
-	    // 		'defaultOrder'=>array(
-	    //   			'id_user'=>true
-	    // 		)
-	  	// 	),
-		// ));
-		//
-		//
-		// $this->render('index',array(
-		// 	'dataProvider'=>$dataProvider,
-		// ));
 	}
 
 	/**
@@ -567,57 +477,9 @@ class UsersController extends Controller
 		));
 		$this->render('approve',array(
 			'dataProvider'=>$dataProvider,
-			'preferredCoinList'=>WebApp::getPreferredCoinList(),
 			'settings'=>$settings,
 		));
 	}
-
-	/**
-	 * CREO LO USER SU BTCPAYSERVER
-	 * Effettuo il login a Btcpay Server e creo un nuovo user
-	 */
-	public function createBTCServerUser($id_merchant,$email){
-		// carico l'estensione
-		//require_once Yii::app()->params['libsPath'] . '/BTCPay/BTCPay.php';
-		Yii::import('libs.BTCPay.BTCPayWebRequest');
-		Yii::import('libs.BTCPay.BTCPay');
-
-		// carico i settings per l'accesso al server
-		$merchants = Merchants::model()->findByPk($id_merchant);
-		 // echo "<pre>".print_r($merchants,true)."</pre>";
-		$BTCPayServerAddress = Settings::loadUser($merchants->id_user)->blockchainAddress;
-		 // echo "<pre>".print_r($BTCPayServerAddress,true)."</pre>";
-		$blockchain = Blockchains::model()->findByAttributes(['url'=>$BTCPayServerAddress]);
-        // exit;
-
-		//  echo "<pre>".print_r(crypt::Decrypt($blockchain->email),true)."</pre>";
-		//  echo "<pre>".print_r(crypt::Decrypt($blockchain->password),true)."</pre>";
-		// exit;
-
-		// inizializzo la classe con user e password di administrator
-		$BTCPay = new BTCPay(crypt::Decrypt($blockchain->email),crypt::Decrypt($blockchain->password));
-		// imposto l'url
-		$BTCPay->setBTCPayUrl($BTCPayServerAddress);
-		// echo "<pre>".print_r($BTCPay->getBTCPayUrl(),true)."</pre>";
-		// exit;
-
-		//creo una password di 32 caratteri casuali
-		$password = Utils::passwordGenerator(32);
-
-		$BpsUsers = new BpsUsers;
-		$BpsUsers->id_merchant = $id_merchant;
-		$BpsUsers->bps_auth = crypt::Encrypt($password);
-
-		if (!($BpsUsers->save())){
-			return false;
-		}
-
-		//ok. Adesso creo lo user.
-		$newUser = $BTCPay->newUser($email,$password);
-		return true;
-	}
-
-
 
 
 

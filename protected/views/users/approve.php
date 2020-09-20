@@ -1,17 +1,3 @@
-<?php
-$gateways=Gateways::model()->findAll();
-$listaGateways = CHtml::listData( $gateways, 'id_gateway' , 'denomination');
-ksort($listaGateways);
-
-if (empty($preferredCoinList))
-	$preferredCoinList = [];
-
-if ($settings->blockchainAsset == '')
-	$settings->blockchainAsset = "{'BTC':'BTC'}";
-
-$enabledAssets = CJSON::decode($settings->blockchainAsset);
-$listaServerBlockchain = CHtml::listData(Blockchains::model()->findAll(), 'url', 'denomination');
-?>
 <div class="form">
 <?php
 $form=$this->beginWidget('CActiveForm', array(
@@ -131,41 +117,13 @@ Yii::app()->clientScript->registerScript('script', $script);
 					</div>
 
 					<div class="card-body">
-							<div class="form-group">
-									<?php echo $form->labelEx($settings,'Seleziona il Server Blockchain'); ?>
-									<?php echo $form->dropDownList($settings,'blockchainAddress',$listaServerBlockchain,array('class'=>'form-control'));	?>
-									<?php echo $form->error($settings,'blockchainAddress',array('class'=>'alert alert-danger')); ?>
-							</div>
 
 							<div class="row form-group ">
-								<div class="col col-md-3">
-									<label class=" form-control-label"><?php echo $form->labelEx($settings,'blockchainAsset'); ?></label>
-								</div>
 
-								<div class="col col-md-9">
-									<div class="form-check">
-										<?php
-										foreach ($preferredCoinList as $key => $value) {
-											$checked = '';
-											if (array_key_exists($key,$enabledAssets))
-												$checked = 'checked="checked"';
-											?>
 
-											<div class="checkbox">
-												<label for="checkbox_<?php echo $key;?>" class="form-check-label ">
-													<input <?php echo $checked;?> type="checkbox" name="blockchainAsset[<?php echo $key;?>]" value="<?php echo $key;?>" class="form-check-input"><?php echo $value;?>
-												</label>
-
-											</div>
-										<?php } ?>
-									</div>
-								</div>
 							</div>
 
-							<div class="form-group">
-								<?php echo $form->labelEx($settings,'Seleziona Gateway'); ?>
-								<?php echo $form->dropDownList($settings,'id_gateway',$listaGateways,array('class'=>'form-control'));	?>
-							</div>
+						
 							<?php echo $form->hiddenField($settings,'id_exchange',array('value'=>1)); ?>
 
 					</div>

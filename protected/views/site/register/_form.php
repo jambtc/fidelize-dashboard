@@ -24,7 +24,7 @@ $form=$this->beginWidget('CActiveForm', array(
 #echo "<pre>".print_r($_POST,true)."</pre>";
 
 
-$administrator = 'Socio';
+$administrator = '';
 $settings=Settings::load();
 if ($settings->version == '0000 0000')
 	$administrator = "Amministratore";

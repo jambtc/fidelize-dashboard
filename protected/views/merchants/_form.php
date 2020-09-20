@@ -7,16 +7,6 @@
 $ajaxSelectbyCap = Yii::app()->createUrl('backend/selectComuneByCap');
 $ajaxSelectProvince = Yii::app()->createUrl('backend/ajaxSelectComune');
 
-if (empty($preferredCoinList))
-	$preferredCoinList = [];
-
-if ($settings->blockchainAsset == '')
-	$settings->blockchainAsset = "{'BTC':'BTC'}";
-
-$enabledAssets = CJSON::decode($settings->blockchainAsset);
-
-$listaServerBlockchain = CHtml::listData(Blockchains::model()->findAll(), 'url', 'denomination');
-
 $myScript = <<<JS
     var ajax_loader_url = 'css/images/loading.gif';
 
@@ -110,21 +100,6 @@ if ($model->isNewRecord){
 $listaProvince[]=' ';
 asort($listaProvince);
 
-//carico la lista associazioni
-// $criteria=new CDbCriteria();
-// $criteria->compare('deleted',0,false);
-// $associations=Associations::model()->findAll($criteria);
-//
-// $listaAssociations = CHtml::listData( $associations, 'id_association' , 'denomination');
-// if (!(isset($listaAssociations)))
-//     $listaAssociations[] = 'Nessuna Associazione di categoria';
-//
-// ksort($listaAssociations);
-
-//carico la lista gateways
-$gateways=Gateways::model()->findAll();
-$listaGateways = CHtml::listData( $gateways, 'id_gateway' , 'denomination');
-
 
 $disabled = 'disabled';
 if ($model->isNewRecord){
@@ -155,43 +130,16 @@ if (!(isset($listaUtenti)))
 
 			<?php if (Yii::app()->user->objUser['privilegi'] == 20 ){ ?>
 				<div class="alert alert-secondary">
-                    <div class="form-group">
+          <div class="form-group">
     					<div class="form-group">
     						<?php echo $form->labelEx($model,'Seleziona l\'Utente/Socio'); ?>
     						<?php echo $form->dropDownList($model,'id_user',$listaUtenti,array("disabled" => $disabled,'class'=>'form-control'));	?>
     					</div>
     				</div>
-                    <div class="form-group">
-                			<?php echo $form->labelEx($settings,'Seleziona il Server Blockchain'); ?>
-                			<?php echo $form->dropDownList($settings,'blockchainAddress',$listaServerBlockchain,array('class'=>'form-control'));	?>
-                			<?php echo $form->error($settings,'blockchainAddress',array('class'=>'alert alert-danger')); ?>
-                	</div>
 
-                	<div class="row form-group ">
-                		<div class="col col-md-3">
-                			<label class=" form-control-label"><?php echo $form->labelEx($settings,'blockchainAsset'); ?></label>
-                		</div>
 
-                		<div class="col col-md-9">
-                			<div class="form-check">
-                				<?php
-                				foreach ($preferredCoinList as $key => $value) {
-                					$checked = '';
-                					if (array_key_exists($key,$enabledAssets))
-                					 	$checked = 'checked="checked"';
-                					?>
 
-                					<div class="checkbox">
-                						<label for="checkbox_<?php echo $key;?>" class="form-check-label ">
-                							<input <?php echo $checked;?> type="checkbox" name="blockchainAsset[<?php echo $key;?>]" value="<?php echo $key;?>" class="form-check-input"><?php echo $value;?>
-                						</label>
-
-                					</div>
-                				<?php } ?>
-                			</div>
-                		</div>
-                	</div>
-                </div>
+        </div>
 			<?php }else{
 				$model->id_user = Yii::app()->user->objUser['id_user'];
 				echo $form->hiddenField($model,'id_user'); ?>

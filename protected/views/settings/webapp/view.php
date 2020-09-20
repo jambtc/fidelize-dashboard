@@ -5,12 +5,6 @@ $viewName = 'Impostazioni';
 
 
 //VISIBILI ALL'USER MERCHANT
-$attributes[] = array(
-					'label'=>'Exchange',
-					'value'=>Exchanges::model()->findByPk(array('id_exchange'=>$model->id_exchange))->denomination
-				);
-$attributes[] =	'exchange_key';
-
 if (Yii::app()->user->objUser['privilegi'] == 10){
 $attributes[] = array(
 					'label'=>'Indirizzo token principale',
@@ -20,34 +14,9 @@ $attributes[] = array(
 
 
 
-//VISIBILI ALL'ASSOCIAZIONE
-// $attributes[] = array(
-// 					'label'=>'Percentuale',
-// 					'value'=>$model->association_percent.' %',
-// 				);
-
-// $attributes[] = array(
-// 					'label'=>'Indirizzo BTC di '.Yii::app()->params['shortName'],
-// 					'value'=>$model->association_receiving_address,
-// 				);
-
-
-
-// echo '<pre>'.print_r($model,true).'</pre>';
-// exit;
-
 
 //VISIBILI ALL'ADMIN
 if (Yii::app()->user->objUser['privilegi'] == 20){
-		// $attributes[] =	'BTCPayServerAddress';
-		// $attributes[] = array(
-		// 					'label'=>'Indirizzo rete POA (token)',
-		// 					'value'=>$model->poa_url
-		// 				);
-		// $attributes[] = array(
-		// 					'label'=>'Chain Id POA (token)',
-		// 					'value'=>(isset($model->poa_chainId) ? $model->poa_chainId : '')
-		// 				);
 		$attributes[] = array(
 							'label'=>'Smart Contract POA (token)',
 							'value'=>(isset($model->poa_contractAddress) ? $model->poa_contractAddress : '')
@@ -57,18 +26,6 @@ if (Yii::app()->user->objUser['privilegi'] == 20){
 							'value'=>$model->poa_expiration . ' (min)',
 						);
 
-		$attributes[] = array(
-							'label'=>'Quota iscrizione socio ordinario',
-							'value'=>$model->quota_iscrizione_socio . ' (€)',
-						);
-		$attributes[] = array(
-							'label'=>'Quota iscrizione Persona Giuridica',
-							'value'=>$model->quota_iscrizione_socioGiuridico . ' (€)',
-						);
-		$attributes[] = array(
-							'label'=>'Sin Associazione',
-							'value'=>isset($model->pos_sin) ? $model->pos_sin : '',
-						);
 
 }
 
@@ -107,14 +64,12 @@ if (Yii::app()->user->objUser['privilegi'] == 20){
 										else
 											$modifyURL = Yii::app()->createUrl('settings/update').'&id='.crypt::Encrypt($model->id_user);
 
-										$users = Users::model()->findByPk(Yii::app()->user->objUser['id_user']);
-										if ($users->id_carica != 4){
 									?>
 											<a href="<?php echo $modifyURL;?>">
 												<button type="button" class="btn btn-warning">Modifica</button>
 											</a>
 
-									<?php } ?>
+
 								</h2>
 							</div>
 						</div>
