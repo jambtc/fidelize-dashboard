@@ -3,6 +3,10 @@ Yii::import('libs.crypt.crypt');
 Yii::import('libs.NaPacks.Settings');
 Yii::import('libs.NaPacks.Logo');
 Yii::import('libs.NaPacks.WebApp');
+Yii::import('libs.NaPacks.SaveModels');
+Yii::import('libs.NaPacks.Save');
+Yii::import('libs.NaPacks.Push');
+Yii::import('libs.Utils.Utils');
 
 class UsersController extends Controller
 {
@@ -127,36 +131,16 @@ class UsersController extends Controller
 		if(isset($_POST['Users']))
 		{
 			$model->attributes=$_POST['Users'];
-			// echo "<pre>".print_r($model->attributes,true)."</pre>";
-			// exit;
 
-			// issue #41
-			// Quando creo utenti con carica Presidente, Vice Presidente, Tesoriere, Segretario, questi devono
-			// essere Amministratori, inoltre non possono essere commercianti.
-			// quindi:
-
-			if ($model->id_carica <=4)
-				$model->id_users_type = 3; // AMMINISTRATORE
-			else{
-				$model->id_users_type = 5; // (SOCIO)
-			}
-
+			$model->id_users_type = 5; // (socio standard. diventa 5 quando genero il commerciante)
+			$model->corporate = 1; // (MERCHANT)
 
 			$savedModel = $_POST['Users'];
 			$savedPassword = $model->password;
 			$model->password = CPasswordHelper::hashPassword($model->password);
 
-			//if ($_POST['Users']['send_mail'] == 1){
-				$model->activation_code = md5($model->password);
-			//	$model->status_activation_code = 0;
-			//}else{
-				//l'utente nasce già attivo se non c'è il flag alla mail
-			//	$model->activation_code = 0;
-				$model->status_activation_code = 0;
-			//}
-			//echo "<pre>".print_r($_POST,true)."</pre>";
-			// echo "<pre>".print_r($model->attributes,true)."</pre>";
-			// exit;
+			$model->activation_code = md5($model->password);
+			$model->status_activation_code = 0;
 
 			if($model->save()){
 				if ($_POST['Users']['send_mail'] == 1){
@@ -168,7 +152,6 @@ class UsersController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
-			//'userSettings'=>$userSettings,
 		));
 	}
 
@@ -395,8 +378,8 @@ class UsersController extends Controller
 	{
 		$settings=new SettingsUserForm;
 
-		 // echo "<pre>".print_r($_POST,true)."</pre>";
-		 // exit;
+		// echo "<pre>".print_r($_POST,true)."</pre>";
+		// exit;
 
 		if(isset($_POST['selectedUsers'])){
 			foreach ($_POST['selectedUsers'] as $x => $id_user){
@@ -418,7 +401,7 @@ class UsersController extends Controller
 						foreach ($_POST['SettingsUserForm'] as $key => $value)
 							$settings->$key = $value;
 
-						$settings->blockchainAsset = CJSON::encode($_POST['blockchainAsset']);
+						//$settings->blockchainAsset = CJSON::encode($_POST['blockchainAsset']);
 						$settings->id_user = $model->id_user;
 						Settings::saveUser($model->id_user,$settings->attributes);
 
@@ -439,15 +422,9 @@ class UsersController extends Controller
 						}
 						//CREO LE NOTIFICHE PER L'HELP IN LINEA ... e le assegno all'id user
 						$this->helpNotifications($merchants->id_user);
-
-						//CREO anche lo USER su BTCPay Server
-						if ($this->createBTCServerUser($merchants->id_merchant,$model->email)){
-							//invio la mail
-							NMail::SendMail('users',crypt::Encrypt($model->id_user),$model->email,'',0);
-						}
-					}else{
-						NMail::SendMail('users',crypt::Encrypt($model->id_user),$model->email,'',0);
 					}
+					NMail::SendMail('users',crypt::Encrypt($model->id_user),$model->email,'',0);
+
 					// aggiorno il model se non ci sono errori
 					$model->save();
 				}else{

@@ -37,10 +37,10 @@ if ($dataIscrizione->totalItemCount > 0){
 								'type'=>'raw',
 								'value' => '$data->email',
 							),
-							array(
-								'name'=>'id_carica',
-								'value'=>'Cariche::model()->findByPk($data->id_carica)->description',
-							),
+							// array(
+							// 	'name'=>'id_carica',
+							// 	'value'=>'Cariche::model()->findByPk($data->id_carica)->description',
+							// ),
 							array(
 								'name'=>'id_users_type',
 								'value'=>'UsersType::model()->findByPk($data->id_users_type)->desc',

@@ -3,14 +3,10 @@ $viewName = 'Utente';
 
 $criteria=new CDbCriteria();
 $criteria->compare('id_user',$model->id_user,false);
-$pagamenti = Pagamenti::model()->findAll($criteria);
-$totalePagamenti=count($pagamenti);
 
 $idUserCrypted = crypt::Encrypt($model->id_user);
 
 $resetPwdURL = Yii::app()->createUrl('users/resetpwd'); //
-$sollecitoURL = Yii::app()->createUrl('users/sollecito');
-$listaPagamentiURL = Yii::app()->createUrl('pagamenti/index').'&id='.$idUserCrypted;
 $modifyURL = Yii::app()->createUrl('users/update').'&id='.$idUserCrypted;
 $changeURL = Yii::app()->createUrl('users/changepwd').'&id='.$idUserCrypted;
 $google2faURL = Yii::app()->createUrl('users/2fa').'&id='.$idUserCrypted;
@@ -61,15 +57,15 @@ function consenso($t){
 									'value'=>(isset($userSettings->telefono) ? $userSettings->telefono : 'Non inserito'),
 								),
 
-								array(
-						            'label'=>'Carica',
-						            'value'=>Cariche::model()->findByPk($model->id_carica)->description
-						        ),
-								array(
-									'type'=> 'raw',
-									'name'=>'iscrizione',
-									'value'=>WebApp::StatoPagamenti($model->id_user),
-								),
+								// array(
+						    //         'label'=>'Carica',
+						    //         'value'=>Cariche::model()->findByPk($model->id_carica)->description
+						    //     ),
+								// array(
+								// 	'type'=> 'raw',
+								// 	'name'=>'iscrizione',
+								// 	'value'=>WebApp::StatoPagamenti($model->id_user),
+								// ),
 								array(
 									'type'=> 'raw',
 									'name'=>'denomination',
@@ -101,15 +97,11 @@ function consenso($t){
 									<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#resetpwdModal"><span class="resetpwd__content">Reset password</span></button>
 
 									<?php if ($model->id_user != 1){ ?>
-										<a href="<?php echo $listaPagamentiURL;?>">
-											<button type="button" class="btn btn-primary">Pagamenti
-			                      				<span class="badge badge-light"><?php echo $totalePagamenti; ?></span>
-			              					</button>
-										</a>
+
 										<?php if ($model->status_activation_code == 0){ ?>
 												<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#scrollmodalModello">Elimina</button>
 										<?php } ?>
-										<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#sollecitoModal">Sollecito</button>
+
 
 										<div class="row div_resetpwd__text" style="display:none;">
 											<div class="col-md-12">
@@ -117,12 +109,7 @@ function consenso($t){
 												<div class="alert alert-warning resetpwd__text" ></div>
 											</div>
 										</div>
-										<div class="row div_sollecito__text" style="display:none;">
-											<div class="col-md-12">
-												</br>
-												<div class="alert alert-info sollecito__text" ></div>
-											</div>
-										</div>
+										
 									<?php } ?>
 							<?php }else{ ?>
 								<a href="<?php echo $changeURL;?>">
@@ -374,7 +361,7 @@ function consenso($t){
 
 
 						<p>
-							Questa operazione invierà nella casella di posta dell'Associazione un link per effettuare il cambio della password.<br>
+							Questa operazione invierà nella casella di posta dell'utente un link per effettuare il cambio della password.<br>
 							Vuoi proseguire?
 						</p>
 

@@ -7,7 +7,6 @@ if (Yii::app()->user->objUser['privilegi'] >5 ){
 		if (count($stores) >0){
 			if (count($pos)>0){
 				$this->renderPartial('_dashboard',array(
-					'dataProvider'=>$dataProvider,
 					'dataProviderTokens'=>$dataProviderTokens,
 					'warningmessage'=>$warningmessage,
 				));

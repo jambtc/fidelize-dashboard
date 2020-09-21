@@ -307,7 +307,7 @@ class StoresController extends Controller
 
 			if($model->save()){
 				//creo lo store su BTCPay Server
-				$this->createBTCPayStore($model->id_merchant,$model->id_store);
+				//$this->createBTCPayStore($model->id_merchant,$model->id_store);
 				$this->redirect(array('view','id'=>crypt::Encrypt($model->id_store)));
 			}
 		}

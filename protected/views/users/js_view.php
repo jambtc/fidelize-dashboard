@@ -21,14 +21,13 @@ $resetPwd = <<<JS
 				$('#marketing_text').html(data.text);
 
 				if (data.error){
-                    return false;
-                }else{
-                    window.location.href = window.location.href;
-                }
+          return false;
+	      }else{
+	          window.location.href = window.location.href;
+	      }
 			},
 			error: function(j){
 				//something happened!!!
-
 			}
 		});
 
@@ -62,27 +61,6 @@ $resetPwd = <<<JS
 		});
 	});
 
-	$("button[id='sollecito-button']").click(function(){
-		$.ajax({
-   		 url:'{$sollecitoURL}',
-		 type: "POST",
-		 data: {id: '{$idUserCrypted}'},
-   		 beforeSend: function() {
-   			 $('#sollecito-button').html('<div class="bitpay-pairing__loading"><center><img width=15 src="'+ajax_loader_url+'"></center></div>');
-   		 },
-   		 dataType: "json",
-   		 success:function(data){
-			 $('#sollecito-button').text('Conferma');
-			 $('.div_sollecito__text').show();
-			 $('.sollecito__text').html(data.txt);
-   		 },
-   		 error: function(j){
-   			 //something happened!!!
-			 $('.div_sollecito__text').show();
-			$('.sollecito__text').html(j);
-   		 }
-   	 });
-	});
 
 	function urlBase64ToUint8Array(base64String) {
 	  var padding = '='.repeat((4 - base64String.length % 4) % 4);

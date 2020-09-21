@@ -40,9 +40,9 @@ class Users extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_users_type, id_carica, email, password, name, surname, vat, address, cap, city, country, activation_code, status_activation_code', 'required'),
+			array('id_users_type, email, password, name, surname, vat, address, cap, city, country, activation_code, status_activation_code', 'required'),
 			array('email', 'unique',  'message'=>'La mail inserita è già presente in archivio.'),
-			array('id_users_type, status_activation_code, id_carica, corporate', 'numerical', 'integerOnly'=>true),
+			array('id_users_type, status_activation_code, corporate', 'numerical', 'integerOnly'=>true),
 			array('email, password, name, surname', 'length', 'max'=>255),
 			array('denomination, vat, address, cap, city, country', 'length', 'max'=>250),
 			array('activation_code', 'length', 'max'=>50),
@@ -52,7 +52,7 @@ class Users extends CActiveRecord
 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_user, id_users_type, id_carica, email, name, surname, corporate, denomination, city, status_activation_code', 'safe', 'on'=>'search'),
+			array('id_user, id_users_type, email, name, surname, corporate, denomination, city, status_activation_code', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -81,7 +81,6 @@ class Users extends CActiveRecord
 		return array(
 			'id_user' => 'Id User',
 			'id_users_type' => 'Tipo utenza',
-			'id_carica' => 'Carica',
 			'email' => 'Email',
 			'password' => 'Password',
 			'ga_secret_key' => 'Google Authentication Code',
@@ -117,11 +116,10 @@ class Users extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('status_activation_code',1,false);
+		//$criteria->compare('status_activation_code',1,false);
 
 		$criteria->compare('id_user',$this->id_user);
 		$criteria->compare('id_users_type',$this->id_users_type);
-		$criteria->compare('id_carica',$this->id_carica,true);
 		$criteria->compare('email',$this->email,true);
 		//$criteria->compare('password',$this->password,true);
 		//$criteria->compare('ga_secret_key',$this->ga_secret_key,true);
@@ -137,42 +135,6 @@ class Users extends CActiveRecord
 
 		//$criteria->compare('status_activation_code',$this->status_activation_code);
 
-		//creo la lista degli utenti abilitati
-		//$users = Users::model()->findAll($criteria);
-		$reminders = array();
-
-		#echo "<pre>".print_r($_GET,true)."</pre>";
-		#exit;
-
-		// WIP FILTRO SOCI
-
-		//valore di default: ATTIVI
-		$limit_up = 0; // 0 perche gli attivi sono tutti, anche quelli in scadenza...
-		$limit_down = -366; //366 perchè è l'anno di validità dell'iscrizione
-
-		if (isset($_GET['typelist'])){
-			switch ($_GET['typelist']){
-				case 0:
-				default:
-					$limit_up 	=  10000000; //
-					$limit_down = -10000000; //negativo
-					break;
-				case 1:
-					$limit_up = 0; // 0 perche gli attivi sono tutti, anche quelli in scadenza...
-					$limit_down = -366; //366 perchè è l'anno di validità dell'iscrizione
-					break;
-				case 2:
-					$limit_up = 0; //1 mese e mezzo prima ti avviso che stai per scadere !!!
-					$limit_down = -45;
-					break;
-				case 3:
-					$limit_up = 366; //1 mese e mezzo prima ti avviso che stai per scadere !!!
-					$limit_down = 0;
-					break;
-			}
-		}
-
-
 		$dataProvider = new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
@@ -186,37 +148,10 @@ class Users extends CActiveRecord
 			),
 		));
 
-		$iterator = new CDataProviderIterator($dataProvider);
-		foreach($iterator as $item) {
-		   // per ciascun utente verifico i pagamenti
-			$timelapse = WebApp::StatoPagamenti($item->id_user,true);
-			if ($timelapse > $limit_down && $timelapse < $limit_up){
-				$reminders[] = $item;
-			}
-			$esempioditest[$item->id_user] = $timelapse;
-		}
-
-		// echo "<pre>".print_r($reminders,true)."</pre>";
-		// exit;
-
-		$newDataProvider = new CArrayDataProvider($reminders, array(
-		    'keyField' => 'id_user',
-		    'keys'=>array('id_user','surname', 'name'),
-		    // 'sort'=>array(
-		    //     'attributes'=>array(
-		    //         'surname', 'name',
-		    //     ),
-		    // ),
-
-		    'pagination'=>array(
-		        'pageSize'=>20,
-		    ),
-		));
-
 		#echo "<pre>".print_r($newDataProvider,true)."</pre>";
 		#exit;
 
-		return $newDataProvider;
+		return $dataProvider;
 
 	}
 

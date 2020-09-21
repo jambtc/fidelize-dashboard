@@ -1,7 +1,5 @@
 <?php
-//lista cariche
-$cariche=Cariche::model()->findAll();
-$listaCariche = CHtml::listData( $cariche, 'id_carica' , 'description');
+
 $disabled = 'disabled';
 if (($model->isNewRecord) || Yii::app()->user->objUser['privilegi'] == 20)
 	$disabled = '';
@@ -54,11 +52,6 @@ $userSettings = Settings::loadUser($model->id_user);
 			<br><br>
 		</i>
 		<?php } ?>
-
-		<div class="form-group">
-			<?php echo $form->labelEx($model,'Seleziona la carica'); ?>
-			<?php echo $form->dropDownList($model,'id_carica',$listaCariche,array("disabled" => $disabled,'class'=>'form-control'));	?>
-		</div>
 
 		<div class="form-group">
 			<?php echo $form->labelEx($model,'email'); ?>

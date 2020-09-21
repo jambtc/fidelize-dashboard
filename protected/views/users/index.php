@@ -63,98 +63,79 @@ if (isset($_GET['typelist']))
 	<div class='container-fluid'>
 		<div class="row">
 			<div class="col-lg-12">
-                <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 bg-overlay--semitransparent">
+        <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 bg-overlay--semitransparent">
 					<div class="card-header ">
 						<i class="fas fa-users"></i>
 						<span class="card-title">Lista Soci</span>
-                        <div class="float-right">
-							<?php $actionURL = Yii::app()->createUrl('users/create'); ?>
-							<a href="<?php echo $actionURL;?>">
-								<button class="btn alert-primary text-light img-cir" style="padding:2.5px; width:30px; height:30px;">
-									<i class="fa fa-plus"></i></button>
-							</a>
-						</div>
-
+            <div class="float-right">
+						  <?php $actionURL = Yii::app()->createUrl('users/create'); ?>
+						    <a href="<?php echo $actionURL;?>">
+							    <button class="btn alert-primary text-light img-cir" style="padding:2.5px; width:30px; height:30px;">
+								    <i class="fa fa-plus"></i></button>
+						    </a>
+					  </div>
 					</div>
 					<div class="card-body">
-                        <span>
-                            <button type='button' class='btn btn-outline-primary btn-sm <?php echo $activeButton[1]; ?>' onclick='lista.cambia(1);'>Attivi</button>
-                            <button type='button' class='btn btn-outline-warning btn-sm <?php echo $activeButton[2]; ?>' onclick='lista.cambia(2);'>In scadenza</button>
-                            <button type='button' class='btn btn-outline-danger btn-sm <?php echo $activeButton[3]; ?>' onclick='lista.cambia(3);'>Scaduti</button>
-                            <button type='button' class='btn btn-outline-info btn-sm <?php echo $activeButton[0]; ?>' onclick='lista.cambia(0);'>Tutti</button>
-                        </span>
+            <!-- <span>
+                <button type='button' class='btn btn-outline-primary btn-sm <?php echo $activeButton[1]; ?>' onclick='lista.cambia(1);'>Attivi</button>
+                <button type='button' class='btn btn-outline-warning btn-sm <?php echo $activeButton[2]; ?>' onclick='lista.cambia(2);'>In scadenza</button>
+                <button type='button' class='btn btn-outline-danger btn-sm <?php echo $activeButton[3]; ?>' onclick='lista.cambia(3);'>Scaduti</button>
+                <button type='button' class='btn btn-outline-info btn-sm <?php echo $activeButton[0]; ?>' onclick='lista.cambia(0);'>Tutti</button>
+            </span> -->
         				<div class="table-responsive table--no-card m-t-40">
         					<?php
         					$this->widget('zii.widgets.grid.CGridView', array(
-                                'id'=>'soci-grid',
+                    'id'=>'soci-grid',
         						//'htmlOptions' => array('class' => 'table table-borderless table-striped table-earning'),
         						//'htmlOptions' => array('class' => 'table table-borderless table-data2 table-earning '),
-                                'htmlOptions' => array('class' => 'table table-wallet '),
-        					    'dataProvider'=>$modelc->search(),
-                                'id'=>'users-grid',
-                                'filter'=>$modelc,
-                                'enablePagination'  => true,
-                                // 'enableSorting' => true,
-                                // 'pager' => array(
-                                //     'class'                 => 'CLinkPager',
-                                //     'prevPageLabel'         => 'Precedente',
-                                //     'nextPageLabel'         => 'Successiva',
-                                //     'header'                => 'Vai alla pagina: ',
-                                //     'previousPageCssClass'  => 'btn btn-info-outline btn-sm',
-                                //     'selectedPageCssClass'  => 'btn btn-warning-outline btn-sm',
-                                //     'internalPageCssClass'  => 'btn btn-info-outline btn-sm',
-                                //     'firstPageCssClass'     => 'btn btn-info-outline btn-sm',
-                                //     'nextPageCssClass'      => 'btn btn-info-outline btn-sm',
-                                // ),
+                    'htmlOptions' => array('class' => 'table table-wallet '),
+        					  'dataProvider'=>$modelc->search(),
+                    'id'=>'users-grid',
+                    'filter'=>$modelc,
+                    'enablePagination'  => true,
         						'columns' => array(
-                                    // 'id_user',
         							array(
         								'type'=> 'raw',
-        					            'name'=>'name',
-                                        'header'=>'Nome',
+        					      'name'=>'name',
+                        'header'=>'Nome',
         								'value' => 'CHtml::link(CHtml::encode(strtoupper(Users::model()->findByPk($data->id_user)->surname).chr(32).Users::model()->findByPk($data->id_user)->name), Yii::app()->createUrl("users/view")."&id=".CHtml::encode(crypt::Encrypt($data->id_user)))',
                                         'filter' => CHtml::listData(Users::model()->findAll(array('order'=>'surname ASC, name ASC')), 'surname', function($items) {
                                         	 return $items->surname.' '.$items->name;
                                         })
-        					        ),
+        					    ),
         							array(
-        					            'name'=>'email',
+        					      'name'=>'email',
         								'type'=>'raw',
         								'value' => 'CHtml::link(CHtml::encode($data->email), Yii::app()->createUrl("users/view")."&id=".CHtml::encode(crypt::Encrypt($data->id_user)))',
-        					        ),
-        							array(
-        					            'name'=>'id_carica',
-                                        'header'=>'Carica',
-        								'value'=>'Cariche::model()->findByPk($data->id_carica)->description',
-                                        'filter'=>CHtml::listData(Cariche::model()->findAll(), 'id_carica', 'description'),
-        					        ),
-                                    array(
-        					            'name'=>'corporate',
-                                        'header'=>'P/F',
+        					    ),
+        							// array(
+        					    //   'name'=>'id_carica',
+                      //   'header'=>'Carica',
+        							// 	'value'=>'Cariche::model()->findByPk($data->id_carica)->description',
+                      //   'filter'=>CHtml::listData(Cariche::model()->findAll(), 'id_carica', 'description'),
+        					    // ),
+                      array(
+        					      'name'=>'corporate',
+                        'header'=>'P/F',
         								'value'=>'($data->corporate == 0) ? "No" : "Si"',
-                                        'filter'=>array('0'=>'No','1'=>'Si'),
-        					        ),
+                        'filter'=>array('0'=>'No','1'=>'Si'),
+        					    ),
         							array(
-        					            'name'=>'id_users_type',
-                                        'header'=>'Tipo',
+        					      'name'=>'id_users_type',
+                        'header'=>'Tipo',
         								'value'=>'UsersType::model()->findByPk($data->id_users_type)->desc',
-                                        'filter'=>$usersTypeList,
-        					        ),
-        							array(
-        								'type'=> 'raw',
-        					            'name'=>'status_activation_code',
-                                        'header'=>'Iscrizione',
-        								'value'=>'WebApp::StatoPagamenti($data->id_user)',
-                                        'filter'=>""
-        					        ),
-                                    [
-                                        'value' =>''
-                                        ]
-                                    // array(
-							      	// 	'name'=>'',
-									// 	'value' => '',
-							    	// ),
-
+                        'filter'=>$usersTypeList,
+        					    ),
+        							// array(
+        							// 	'type'=> 'raw',
+        					    //   'name'=>'status_activation_code',
+                      //   'header'=>'Iscrizione',
+        							// 	'value'=>'WebApp::StatoPagamenti($data->id_user)',
+                      //                   'filter'=>""
+        					    // ),
+                      [
+                        'value' =>''
+                      ]
         						)
         					));
         					?>
