@@ -405,6 +405,9 @@ class UsersController extends Controller
 						$settings->id_user = $model->id_user;
 						Settings::saveUser($model->id_user,$settings->attributes);
 
+						if (empty($model->denomination))
+							$model->denomination = 'denomination';
+
 						// salvo il merchant
 						$merchants = new Merchants;
 						$merchants->id_user = $model->id_user;
