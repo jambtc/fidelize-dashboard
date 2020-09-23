@@ -86,13 +86,13 @@ Yii::app()->clientScript->registerScript('myWalletScript', $myWalletScript,CClie
 							            'name'=>'Email',
 							            'value'=>'(isset(Users::model()->findByAttributes(array("id_user"=>$data->id_user))->email) ? Users::model()->findByAttributes(array("id_user"=>$data->id_user))->email : Yii::t("lang","Not found"))'
 							        ),
-									array(
-										'type'=>'raw',
-										'name'=>'id_merchant',
-										'header'=>'',
-										'value'=> 'WebApp::showPasswordButton($data->id_merchant)',
-										'visible' => $visible,
-									),
+									// array(
+									// 	'type'=>'raw',
+									// 	'name'=>'id_merchant',
+									// 	'header'=>'',
+									// 	'value'=> 'WebApp::showPasswordButton($data->id_merchant)',
+									// 	'visible' => $visible,
+									// ),
 
 									// array(
 							        //     'name'=>'address',
@@ -104,11 +104,11 @@ Yii::app()->clientScript->registerScript('myWalletScript', $myWalletScript,CClie
 							        //     'value'=>'ComuniItaliani::model()->findByPk($data->city)->citta.
 									// 				" (". ComuniItaliani::model()->findByPk($data->city)->sigla.")"'
 							        // ),
-									array(
-										'type'=> 'raw',
-							            'name'=>'iscrizione',
-										'value'=>'WebApp::StatoPagamenti($data->id_user)',
-							        ),
+									// array(
+									// 	'type'=> 'raw',
+							    //         'name'=>'iscrizione',
+									// 	'value'=>'WebApp::StatoPagamenti($data->id_user)',
+							    //     ),
                                     [
                                         'name' =>''
                                         ]
