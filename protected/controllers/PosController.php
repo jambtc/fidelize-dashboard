@@ -103,6 +103,7 @@ class PosController extends Controller
 				));
 				$model->id_merchant = $merchants->id_merchant; //id del commerciante
 			}
+			$model->pairingCode = 0;
 
 			if($model->save()){
 				$pairingCode = $this->BTCPayNewToken($model->id_pos);
@@ -300,7 +301,7 @@ class PosController extends Controller
  		$label = substr($label, 0, 59);
 
  		// Get SIN Format
- 		$sin = Utils::passwordGenerator(16);
+ 		$sin = Utils::passwordGenerator(32);
  		if (true === empty($sin)) {
 			$save->WriteLog('napay','pos','Pairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a SinKey object. Cannot continue!', true);
  		}
