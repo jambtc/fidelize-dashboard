@@ -15,8 +15,8 @@ $visible = (Yii::app()->user->objUser['privilegi'] == 20) ? true : false;
 
 // sei admin, ma la carica di tesoriere non può vedere...
 $users = Users::model()->findByPk(Yii::app()->user->objUser['id_user']);
-if ($users->id_carica == 4)
-	$visible = false;
+// if ($users->id_carica == 4)
+// 	$visible = false;
 
 
 $actionURL = Yii::app()->createUrl('stores/create');
