@@ -49,15 +49,9 @@ class PosController extends Controller
 					'update',
 					'delete',
 					'ajaxCreateSelectStore',
-					'BtcpayserverPairing',
-					//'BitpayPairing',
-					'BtcpayserverRevoke',
-					//'BitpayRevoke',
-					//'CoingatePairing',
-					//'CoingateRevoke',
+					'pairing',
+					'revoke',
 					'sendmail',
-					//'activate', // creo un nuovo pairing token su btcpay server
-					//'savempk', // salvo la MPK in btcpay server
 				),
 				'users'=>array('@'),
 			),
@@ -109,6 +103,7 @@ class PosController extends Controller
 				));
 				$model->id_merchant = $merchants->id_merchant; //id del commerciante
 			}
+			$model->pairingCode = 0;
 
 			if($model->save()){
 				$pairingCode = $this->BTCPayNewToken($model->id_pos);
@@ -265,135 +260,54 @@ class PosController extends Controller
 	/**
      * FA IL PAIRING CON LO STORE DI BTCPAYSERVER
      */
-	 public function actionBtcpayserverPairing()
+	 public function actionPairing()
  	{
 		$save = new Save;
 
  		if (!isset($_POST)){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','POST parameter is required!', true);
+			$save->WriteLog('napay','pos','Pairing','POST parameter is required!', true);
  		}
 
  		// Validate the Pairing Code
  		if (true === isset($_POST['pairingCode']) && trim($_POST['pairingCode']) !== '') {
  			$pairing_code = trim($_POST['pairingCode']);
  		} else {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Pairing Code is required!', true);
- 		}
- 		if (!preg_match('/^[a-zA-Z0-9]{7}$/', $pairing_code)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Invalid Pairing Code!', true);
+			$save->WriteLog('napay','pos','Pairing','Pairing Code is required!', true);
  		}
 
  		if (!isset($_POST['label']) || $_POST['label'] ==''){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Label is required!', true);
+			$save->WriteLog('napay','pos','Pairing','Label is required!', true);
  		}
  		if (!isset($_POST['id_pos']) || $_POST['id_pos'] ==''){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Pos Id is required!', true);
+			$save->WriteLog('napay','pos','Pairing','Pos Id is required!', true);
  		}
 
  		$pos = Pos::model()->findByPk(crypt::Decrypt($_POST['id_pos']));
  		if($pos===null){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The requested id does not exist on this Server!', true);
+			$save->WriteLog('napay','pos','Pairing','The requested id does not exist on this Server!', true);
  		}
  		$merchants = Merchants::model()->findByPk($pos->id_merchant);
  		if($merchants===null){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The requested merchant does not exist on this Server!', true);
+			$save->WriteLog('napay','pos','Pairing','The requested merchant does not exist on this Server!', true);
  		}
 
 		$settings=Settings::load();
 		if($settings===null){
-      $save->WriteLog('napay','pos','BtcpayserverPairing','Error. The requested Settings does not exist.',true);
+      $save->WriteLog('napay','pos','Pairing','Error. The requested Settings does not exist.',true);
 		}
 
-		// carico l'estensione
-		//require_once Yii::app()->params['libsPath'] . '/BTCPay/BTCPay.php';
-		Yii::import('libs.BTCPay.BTCPayWebRequest');
-		Yii::import('libs.BTCPay.BTCPay');
-
- 		// Effettuo il login senza dati
- 		$BTCPay = new BTCPay(null,null);
-
- 		// imposto l'url
- 		$BTCPay->setBTCPayUrl(Settings::loadUser($merchants->id_user)->blockchainAddress);
-
- 		$url = $BTCPay->getBTCPayUrl();
-
-
- 		/**
- 		*	AUTOLOADER GATEWAYS
- 		*/
- 		// $btcpay = Yii::app()->basePath . '/extensions/gateways/btcpayserver/Btcpay/Autoloader.php';
-		$btcpay = Yii::app()->params['libsPath'] . '/gateways/btcpayserver-php-v1/Btcpay/Autoloader.php';
- 		if (true === file_exists($btcpay) && true === is_readable($btcpay)){
- 		    require_once $btcpay;
- 		    \Btcpay\Autoloader::register();
- 		} else {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Btc Library could not be loaded.', true);
- 		}
-
- 		// set folder & file
- 		$folder = Yii::app()->basePath . '/privatekeys/';
- 		$id_pos = "000000";
-
- 		// Generate Private Key
- 		$key = new \Btcpay\PrivateKey($folder.$id_pos.'.pri');
- 		if (true === empty($key)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a PrivateKey object. Cannot continue!', true);
- 		}
- 		// Generate a random number
- 		$key->generate();
- 		$key = \Btcpay\PrivateKey::create($folder.$id_pos.'.pri')->generate();
-
- 		// Generate Public Key
- 		$pub = new \Btcpay\PublicKey($folder.$id_pos.'.pub');
- 		if (true === empty($pub)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a PublicKey object. Cannot continue!', true);
- 		}
- 		// Inject the private key into the public key
- 		$pub->setPrivateKey($key);
- 		// Generate the public key
- 		$pub->generate();
-
- 		// Get SIN Format
- 		$sin = new \Btcpay\SinKey();
- 		if (true === empty($sin)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a SinKey object. Cannot continue!', true);
- 		}
- 		$sin->setPublicKey($pub);
- 		$sin->generate();
-
- 		// Create an API Client
- 		$client = new \Btcpay\Client\Client();
- 		if (true === empty($client)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a Client object. Cannot continue!', true);
- 		}
-
- 		$client->setUri($url);
- 		$curlAdapter = new \Btcpay\Client\Adapter\CurlAdapter();
- 		if (true === empty($curlAdapter)) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a CurlAdapter object. Cannot continue!', true);
- 		}
-
- 		$client->setAdapter($curlAdapter);
- 		$client->setPrivateKey($key);
- 		$client->setPublicKey($pub);
-
- 		// Sanitize label
+		// Sanitize label
  		$label = preg_replace('/[^a-zA-Z0-9 \-\_\.]/', '', $_POST['label']);
  		$label = substr($label, 0, 59);
 
- 		try {
- 			$token = $client->createToken(
- 				array(
- 					'id'          => (string) $sin,
- 					'pairingCode' => $pairing_code,
- 					'label'       => $label,
- 				)
- 			);
- 		} catch (\Exception $e) {
-			$save->WriteLog('napay','pos','BtcpayserverPairing',$e->getMessage(), true);
+ 		// Get SIN Format
+ 		$sin = Utils::passwordGenerator(32);
+ 		if (true === empty($sin)) {
+			$save->WriteLog('napay','pos','Pairing','The BTCPay payment plugin was called to process a pairing code but could not instantiate a SinKey object. Cannot continue!', true);
  		}
+
  		//TOKEN
- 		$persistThisValue = $token->getToken();
+ 		$persistThisValue = md5($sin);
 
  		//SAVE PAIRING INFORMATIONS
  		$model = new Pairings;
@@ -406,28 +320,13 @@ class PosController extends Controller
  		// exit;
 
  		if (!$model->save()){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Cannot save pairing informations.', true);
+			$save->WriteLog('napay','pos','Pairing','Cannot save pairing informations.', true);
  		}
  		$updatepos = Pos::model()->findByPk(crypt::Decrypt($_POST['id_pos']));
  		$updatepos->pairingCode = '';
  		if (!$updatepos->save()){
-			$save->WriteLog('napay','pos','BtcpayserverPairing','Cannot delete old pairingCode.', true);
+			$save->WriteLog('napay','pos','Pairing','Cannot delete old pairingCode.', true);
  		}
-
-
- 		/**
- 		 * It's recommended that you use the EncryptedFilesystemStorage engine to persist your
- 		 * keys. You can, of course, create your own as long as it implements the StorageInterface
- 		 */
- 		$storageEngine = new \Btcpay\Storage\EncryptedFilesystemStorage(crypt::Decrypt($settings->fileSystemStorageKey));
- 		$storageEngine->persist($key);
- 		$storageEngine->persist($pub);
-
- 		// rinomino i file con il nome SIN
- 		$newfile = (string) $sin;
-
- 		rename ($folder.$id_pos.'.pri',$folder.$newfile.'.pri');
- 		rename ($folder.$id_pos.'.pub',$folder.$newfile.'.pub');
 
  		$return = array(
  			'sin' => (string) $sin,
@@ -437,7 +336,7 @@ class PosController extends Controller
  		);
 
  		//restituisco alla funzione i nuovi valori inseriti
-		$save->WriteLog('napay','pos','BtcpayserverPairing', $newfile. ' paired successfully.');
+		$save->WriteLog('napay','pos','Pairing', $sin. ' paired successfully.');
     echo CJSON::encode($return);
  	}
 
@@ -707,28 +606,15 @@ class PosController extends Controller
 	 */
 	public function BTCPayNewToken($id_pos) {
 		$save = new Save;
-		// carico l'estensione
-		//require_once Yii::app()->params['libsPath'] . '/BTCPay/BTCPay.php';
-		Yii::import('libs.BTCPay.BTCPayWebRequest');
-		Yii::import('libs.BTCPay.BTCPay');
+
 
 		$pos = Pos::model()->findByPk($id_pos);
 		$stores = Stores::model()->findByPk($pos->id_store);
 		$merchants = Merchants::model()->findByPk($stores->id_merchant);
-		$BpsUsers = BpsUsers::model()->findByAttributes(array('id_merchant'=>$stores->id_merchant));
 		$users = Users::model()->findByPk($merchants->id_user);
 
-		// Effettuo il login
-		$BTCPay = new BTCPay($users->email,crypt::Decrypt($BpsUsers->bps_auth));
-
-		// imposto l'url
-		$BTCPay->setBTCPayUrl(Settings::loadUser($merchants->id_user)->blockchainAddress);
-
-		// Imposto lo storeId e il Name, prima di chiamare la funzione
-		$BTCPay->setStoreId($stores->bps_storeid);
-
 		//richiedo il pairing code
-		$pairingCode = $BTCPay->newToken();
+		$pairingCode = $pairingCode = Utils::passwordGenerator('5');
 
 		$pos->pairingCode = $pairingCode;
 		$pos->update();

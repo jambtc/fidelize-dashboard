@@ -1,5 +1,7 @@
 <?php
-$libsPath = dirname(__FILE__).DIRECTORY_SEPARATOR.'../../../libs/';
+$libsPath = dirname(__FILE__).DIRECTORY_SEPARATOR.'../../../fidelize-packages';
+Yii::setPathOfAlias('libs', $libsPath);
+
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 return array(
@@ -29,12 +31,6 @@ return array(
 				),
 			),
 		),
-		// MIE CLASSI
-		'webRequest'=>require($libsPath.'/webRequest/webRequest.php'),
-		'crypt'=>require($libsPath.'/crypt/crypt.php'),
-		'Utils'=>require($libsPath.'/Utils/Utils.php'),
-		'Settings'=>require($libsPath.'/NAPay/Settings.php'),
-
 	),
 	'params'=>array(
 		'libsPath'=>$libsPath,

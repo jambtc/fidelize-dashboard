@@ -98,10 +98,6 @@ class LoginForm extends CFormModel
 					$this->addError('password','L\'utente non è abilitato.');
 					break;
 
-				case UserIdentity::ERROR_USERNAME_NOT_PAYER:
-					$this->addError('password',"Nessun pagamento trovato.");
-					break;
-
 				case UserIdentity::ERROR_USERNAME_NOT_MEMBER:
 					$this->addError('password',"L'iscrizione è scaduta. Provvedere al pagamento della quota associativa per il rinnovo.");
 					break;

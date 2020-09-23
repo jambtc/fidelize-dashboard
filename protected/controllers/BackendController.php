@@ -234,64 +234,12 @@ class BackendController extends Controller
 		echo CJSON::encode($result);
     }
 
-
+	// funzione che cercava le transazioni in new nella tabella crypto
+	// forse bisogna riscriverla per i token??
+	// TODO 
 	public function actionCheckInvoices()
 	{
 		$response['success'] = 0;
-		if (Yii::app()->user->objUser['privilegi'] >5){
-			$criteria=new CDbCriteria();
-			$adesso_piu_5_minuti = time() - (5*60);
-			//	controllo solo le new che magari non si sono aggiornate ancora
-			//	controllo solo le transazioni scadute da oltre 5 minuti oltre al tempo di scadenza fattura
-			$criteria->compare('status','new',false);
-			$criteria->addCondition('\'expiration_timestamp\' > \''.$adesso_piu_5_minuti.'\'','AND'); // il simbolo è minore
-			$dataProvider=new CActiveDataProvider('Transactions', array(
-			    'criteria'=>$criteria,
-			));
-
-			$iterator = new CDataProviderIterator($dataProvider);
-			foreach($iterator as $item) {
-				//dalla transazione cerco il pos per vedere se esiste la chiave privata
-				$pos=Pos::model()->findByPk($item->id_pos);
-				if ($pos !== null){
-					//dal $pos-id cerco il file della chiave privata
-					$privatekeyFile = Yii::app()->basePath . '/privatekeys/btcpay-'.$item->id_pos.'.pri';
-					if (true === file_exists($privatekeyFile)){
-						//dalla transazione cerco il merchant
-						$merchants=Merchants::model()->findByPk($item->id_merchant);
-						if ($merchants !== null){
-							//dal merchants cerco il settings
-							//$settings=Settings::model()->findByAttributes(array('id_user'=>$merchants->id_user));
-							$settings=Settings::loadUser($merchants->id_user);
-							// dal settings cerco il gateway
-							// se il gateway non è impostato assegno 1 (btcpayserver)
-							$gateways=Gateways::model()->findByPk((isset($settings->id_gateway) ? $settings->id_gateway : 1));
-							#echo '<br>'.$gateways->action_controller;
-							$response['success'] = 1;
-
-							switch (strtolower($gateways->action_controller)){
-								case 'coingate':
-									$this->checkCoingateInvoice($item);
-									break;
-								case 'bitpay':
-									$this->checkBitpayInvoice($item);
-									break;
-								case 'btcpayserver':
-									$this->checkBtcpayserverInvoice($item);
-									break;
-							}
-						}else{
-							$response['message'] = 'id Merchant ('.$item->id_merchant.') non trovato!';
-						}
-					}else{
-						$response['message'] = 'private key ('.$item->id_pos.') non trovato!';
-					}
-				}else{
-					$response['message'] = 'id Pos ('.$item->id_pos.') non trovato!';
-				}
-			}
-
-		}
 		echo CJSON::encode($response,true);
 	}
 	/*

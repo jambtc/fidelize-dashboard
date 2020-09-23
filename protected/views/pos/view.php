@@ -3,20 +3,16 @@
 /* @var $model Pos */
 $viewName = 'Pos';
 
-
 //RICERCA GATEWAY PER INVIARE COMANDI PERSONALIZZATI
 $merchants=Merchants::model()->findByAttributes(array('id_merchant'=>$model->id_merchant));
 //$settings=Settings::model()->findByAttributes(array('id_user'=>$merchants->id_user));
 $settings=Settings::loadUser($merchants->id_user);
-if (empty($settings->id_gateway))
-	$settings->id_gateway = 1;
-$gateways=Gateways::model()->findByPk($settings->id_gateway);
 
 $urlACTIVATEPOS = Yii::app()->createUrl('pos/activate'); // controller che crea il token per il pairing su BTCPayserver
 // $urlSaveMpk = Yii::app()->createUrl('pos/savempk'); // controller che crea il token per il pairing su BTCPayserver
 
-$urlPairing = Yii::app()->createUrl('pos/'.$gateways->action_controller.'Pairing'); // controller che fa il pairing
-$urlRevoke = Yii::app()->createUrl('pos/'.$gateways->action_controller.'Revoke'); // controller che revoca il pairing
+$urlPairing = Yii::app()->createUrl('pos/pairing'); // controller che fa il pairing
+$urlRevoke = Yii::app()->createUrl('pos/revoke'); // controller che revoca il pairing
 $urlReturn = Yii::app()->request->url;
 $urlMailSin = Yii::app()->createUrl('pos/sendmail');
 
