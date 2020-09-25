@@ -22,7 +22,7 @@
 	try {
 	  //WidgetChart 2
 	  var ctx21 = document.getElementById("widgetChart21");
-	  $('#euro_incassati').text(<?php echo $total_EURO;?>);
+	  $('#euro_incassati').text(<?php echo $tokentotal;?>);
 
 	  if (ctx21) {
 		ctx21.height = 130;
