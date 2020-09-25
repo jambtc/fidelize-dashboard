@@ -47,7 +47,7 @@ $InvoiceAddress = 'https://pos.' . Utils::get_domain($http_host) . '/index.php';
 										'type'=>'raw',
 										'name'=>Yii::t('model','status'),
 										'class'=>'jam-status',
-										'value' => ( $model->status == "new" ) ?
+										'value' => ( $model->status == "new" || $model->status == 'expired') ?
 										(
 											CHtml::ajaxLink(
 											    WebApp::walletStatus($model->status),          // the link body (it will NOT be HTML-encoded.)
