@@ -5,6 +5,7 @@ Yii::import('libs.NaPacks.Settings');
 Yii::import('libs.NaPacks.WebApp');
 Yii::import('libs.NaPacks.SaveModels');
 Yii::import('libs.NaPacks.Save');
+Yii::import('libs.Utils.Utils');
 
 class SettingsController extends Controller
 {
@@ -58,6 +59,9 @@ class SettingsController extends Controller
 					'storeCheckout',
 					'posUpdate',
 					'posDelete',
+
+					'apiKeysGet',	// genero la coppia di chiavi API del rules engine
+					'apiKeysDelete',	// delete API keys del rules engine
 				),
 				'users'=>array('@'),
 			),
@@ -65,6 +69,37 @@ class SettingsController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	/**
+	 * DELETE Api KEys for RULES ENGINE
+	 * @param
+	 */
+	public function actionApiKeysDelete()
+	{
+		$model = new SettingsWebappForm;
+		$settings= Settings::load();
+		$model->attributes = (array)$settings;
+		$model->RuleEngineApiKeyPublic = "";
+		$model->RuleEngineApiKeySecret = "";
+		Settings::save($model);
+
+		echo CJSON::encode([
+			'public'=>$model->RuleEngineApiKeyPublic,
+			'secret'=>$model->RuleEngineApiKeySecret
+		]);
+	}
+
+	/**
+	 * Generate Api KEys for RULES ENGINE
+	 * @param
+	 */
+	public function actionApiKeysGet()
+	{
+		echo CJSON::encode([
+			'public'=>Utils::passwordGenerator(24,true),
+			'secret'=>Utils::passwordGenerator(64,true)
+		]);
 	}
 
 	/**
@@ -102,6 +137,10 @@ class SettingsController extends Controller
 				$model->attributes=$_POST['SettingsWebappForm'];
 				// echo '<pre>'.print_r($model->attributes,true).'</pre>';
 				// exit;
+				if (isset($_POST['SettingsWebappForm']['RuleEngineApiKeySecret'])){
+					// $model->RuleEngineApiKeyPublic = crypt::Encrypt($_POST['SettingsWebappForm']['RuleEngineApiKeyPublic']);
+					$model->RuleEngineApiKeySecret = crypt::Encrypt($_POST['SettingsWebappForm']['RuleEngineApiKeySecret']);
+				}
 
 				if (isset($_POST['SettingsWebappForm']['sshhost'])){
 					$model->sshhost = crypt::Encrypt($_POST['SettingsWebappForm']['sshhost']);

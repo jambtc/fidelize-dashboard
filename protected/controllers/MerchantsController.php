@@ -170,13 +170,14 @@ class MerchantsController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		// echo "<pre>".print_r($_POST,true)."</pre>";
+		// exit;
 		//caricamenti singoli
 		$model=$this->loadModel(crypt::Decrypt($id));
 		$settings = new SettingsUserForm;
 		$settingsLoaded = Settings::loadUser($model->id_user);
 
-		#echo "<pre>".print_r($_POST,true)."</pre>";
-		#exit;
+
 		$settings->attributes = (array)$settingsLoaded;
 
 
@@ -194,10 +195,10 @@ class MerchantsController extends Controller
 		if(isset($_POST['Merchants']))
 		{
 			$model->attributes=$_POST['Merchants'];
-			$settings->attributes = $_POST['SettingsUserForm'];
-			$settings->blockchainAsset = CJSON::encode($_POST['blockchainAsset']);
+			//$settings->attributes = $_POST['SettingsUserForm'];
+			//$settings->blockchainAsset = CJSON::encode($_POST['blockchainAsset']);
+			//Settings::saveUser($model->id_user,$settings->attributes);
 
-			Settings::saveUser($model->id_user,$settings->attributes);
 			if($model->update())
 				$this->redirect(array('view','id'=>crypt::Encrypt($model->id_merchant)));
 		}

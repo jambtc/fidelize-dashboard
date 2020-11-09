@@ -17,6 +17,7 @@
  * NOTE, this file must be saved in UTF-8 encoding.
  */
 return array (
+  'This operation delete connection with RULES ENGINE Service.' => 'Questa operazione elimina la connessione con il servizio "RULES ENGINE."',
   'Insert key for encrypting file system storage' => 'Inserisci una chiave per cruptare il File system Storage',
   'Welcome to' => 'Benvenuto su',
   'If you set the time to zero the alarm will not be activated.' => 'Impostando il tempo a zero l\'allarme non verrà attivato.',
