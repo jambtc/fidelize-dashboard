@@ -97,7 +97,7 @@ class SettingsController extends Controller
 	public function actionApiKeysGet()
 	{
 		echo CJSON::encode([
-			'public'=>Utils::passwordGenerator(24,true),
+			'public'=>Utils::passwordGenerator(24),
 			'secret'=>Utils::passwordGenerator(64,true)
 		]);
 	}
@@ -139,7 +139,7 @@ class SettingsController extends Controller
 				// exit;
 				if (isset($_POST['SettingsWebappForm']['RuleEngineApiKeySecret'])){
 					// $model->RuleEngineApiKeyPublic = crypt::Encrypt($_POST['SettingsWebappForm']['RuleEngineApiKeyPublic']);
-					$model->RuleEngineApiKeySecret = crypt::Encrypt($_POST['SettingsWebappForm']['RuleEngineApiKeySecret']);
+					$model->RuleEngineApiKeySecret = md5($_POST['SettingsWebappForm']['RuleEngineApiKeyPublic'].$_POST['SettingsWebappForm']['RuleEngineApiKeySecret']);
 				}
 
 				if (isset($_POST['SettingsWebappForm']['sshhost'])){

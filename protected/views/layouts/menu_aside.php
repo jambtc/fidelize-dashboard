@@ -62,6 +62,7 @@
 						<a class="js-arrow" href="#">
 							<i class="fa fa-archive"></i>Amministrazione</a>
 						<ul class="list-unstyled navbar__sub-list js-sub-list">
+
 							<li style='display: <?php echo $visible[20]; ?>;'>
 								<a href="<?php echo Yii::app()->createUrl('users/index');?>"><i class="fas fa-users"></i>Soci</a>
 							</li>
@@ -76,6 +77,9 @@
 									<a href="<?php echo Yii::app()->createUrl('log/index');?>"><i class="fa fa-list-alt"></i>Log</a>
 								</li>
 							<?php } ?>
+							<li style='display: <?php echo $visible[10]; ?>;'>
+								<a href="<?php echo Yii::app()->createUrl('api/index');?>"><i class="fas fa-chain"></i>API Keys</a>
+							</li>
 						</ul>
 					</li>
 					<li class="has-sub" style='display: <?php echo $visible[20]; ?>;'>

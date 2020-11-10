@@ -77,6 +77,9 @@
 								<a href="<?php echo Yii::app()->createUrl('log/index');?>">Log<i class="fa fa-list-alt"></i></a>
 							</li>
 						<?php } ?>
+						<li style='display: <?php echo $visible[10]; ?>;'>
+							<a href="<?php echo Yii::app()->createUrl('api/index');?>"><i class="fas fa-chain"></i>API Keys</a>
+						</li>
 					</ul>
 				</li>
 				<li class="has-sub" style='display: <?php echo $visible[20]; ?>;'>
