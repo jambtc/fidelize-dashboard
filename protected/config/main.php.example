@@ -103,7 +103,7 @@ return array(
 		'simple_html_dom'=>require(dirname(__FILE__).'../../extensions/simple_html_dom.php'),
 		'MYPDF'=>require(dirname(__FILE__).'../../extensions/MYPDF.php'),
 		'PHPExcel'=>require(dirname(__FILE__).'../../extensions/PHPExcel.php'),
-
+		
 		// database settings are configured in database.php
 		'db'=>require(dirname(__FILE__).'/database.php'),
 
