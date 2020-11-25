@@ -26,7 +26,7 @@ class BackendAPI
    * @param string $version API version
    * @param bool $sslverify enable/disable SSL peer verification.  disable if using beta.api.kraken.com
   */
-  function __construct($key, $secret, $url='https://localhost', $version='0', $sslverify=true)
+  function __construct($key, $secret, $url='https://localhost/', $version='0', $sslverify=true)
   {
     $this->key = $key;
     $this->secret = $secret;

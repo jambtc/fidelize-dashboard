@@ -85,8 +85,8 @@ class IpnController extends Controller
     // echo '<pre>'.print_r($raw_post_data,true).'</pre>';
 
     // VERIFICO CHE I DATI INVIATI SIANO CORRETTI
-    Yii::import('ext.SecurityToken');
-    $ipn = json_decode(SecurityToken::check(json_decode($raw_post_data)));
+    Yii::import('ext.APIKeys');
+    $ipn = json_decode(APIKeys::check(json_decode($raw_post_data)));
 		if (true === empty($ipn)) {
       $save->WriteLog('dashboard','ipn','send','Error. Could not decode the JSON payload from Server.',true);
 		}else{
