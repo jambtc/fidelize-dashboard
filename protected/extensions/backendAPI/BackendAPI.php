@@ -17,6 +17,8 @@ class BackendAPI
 	protected $proxyurl = null;		// set proxy
 	protected $proxyuserpwd = null;	// set proxy
 
+  protected $rulesEngineUrl = null; // url of rules engine server
+
   /**
    * Constructor for BackendAPI
    *
@@ -26,11 +28,10 @@ class BackendAPI
    * @param string $version API version
    * @param bool $sslverify enable/disable SSL peer verification.  disable if using beta.api.kraken.com
   */
-  function __construct($key, $secret, $url='https://localhost/', $version='0', $sslverify=true)
+  function __construct($key, $secret, $version='0', $sslverify=true)
   {
     $this->key = $key;
     $this->secret = $secret;
-    $this->url = $url;
     $this->version = $version;
     $this->curl = curl_init();
 
@@ -46,6 +47,21 @@ class BackendAPI
   function __destruct()
   {
     curl_close($this->curl);
+  }
+
+  /**
+  * @param url Url of Rules Engine server
+  */
+  public function setRulesEngineUrl($url)
+  {
+    $this->rulesEngineUrl = $url;
+  }
+  /**
+  * @param url Url of Rules Engine server
+  */
+  public function getRulesEngineUrl()
+  {
+    $this->rulesEngineUrl;
   }
 
 	/**

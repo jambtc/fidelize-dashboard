@@ -12,6 +12,6 @@ class Backend extends BackendAPI
   */
   public function send($ipn)
   {
-    return $this->QueryPrivate($this->url, (array) $ipn);
+    return $this->QueryPrivate($this->rulesEngineUrl, (array) $ipn);
   }
 };

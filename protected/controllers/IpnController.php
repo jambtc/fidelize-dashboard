@@ -52,6 +52,8 @@ class IpnController extends Controller
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array(
           'send', // send an order to rules engine
+          'test', //
+          'rules', // action where receiving rules engine responses
         ),
 				'users'=>array('*'),
 			),
@@ -60,6 +62,19 @@ class IpnController extends Controller
 			),
 		);
 	}
+
+  public function actionTest(){
+    if (rand(1,10)==1){
+      $return['success'] = 2;
+      $return['message'] = 'Errore nella risposta del Rules Engine!';
+    }else{
+      $return['success'] = true;
+      $return['message'] = 'Risposta del Rules Engine OK!';
+    }
+
+ 		echo CJSON::encode($return);
+
+  }
 
 
 	/**
@@ -109,23 +124,37 @@ class IpnController extends Controller
     $rulesAPIKey = $settings->RuleEngineApiKeyPublic;
     $rulesAPISecret = $settings->RuleEngineApiKeySecret;
   //  $rulesURL = $settings->RuleEngineUrl;
-    $rulesURL = 'localhost';
+    // facciamo finta che sia questo
+    $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/test';
 
 
     Yii::import('ext.backendAPI.Backend');
     Yii::import('ext.backendAPI.BackendAPI');
 
-    $api = new Backend($rulesAPIKey,$rulesAPISecret,$rulesURL);
+    $api = new Backend($rulesAPIKey,$rulesAPISecret);
 
     //$proxy = [ 'address' => 'proxy.example.it', 'port' => '8080', 'user' => 'username', 'pass' => 'password' ];
     //$api->setProxy($proxy);
+    $api->setRulesEngineUrl($rulesURL);
+
+    // echo '<pre>'.print_r($api->getRulesEngineUrl(),true).'</pre>';
+    // exit;
+
+
+
     $result = $api->send($ipn);
 
+    //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
+    $save->WriteLog('dashboard','ipn','send',"IPN received for Shopping Cart transaction id: ".$ipn->id);
+
+
+    echo CJSON::encode($result);
 
 
 
-    //echo '<pre>'.print_r($settings,true).'</pre>';
-    exit;
+
+    // echo '<pre>'.print_r($result,true).'</pre>';
+    // exit;
 
 
 
@@ -138,7 +167,7 @@ class IpnController extends Controller
 
 		//Respond with HTTP 200, so BitPay knows the IPN has been received correctly
 		//If BitPay receives <> HTTP 200, then BitPay will try to send the IPN again with increasing intervals for two more hours.
-		header("HTTP/1.1 200 OK");
+		//header("HTTP/1.1 200 OK");
 	}
 
 
