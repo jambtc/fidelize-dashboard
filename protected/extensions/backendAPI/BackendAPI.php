@@ -101,8 +101,7 @@ class BackendAPI
     $postdata = http_build_query($request, '', '&');
 
     // set API key and sign the message
-    //$path = '/' . $this->version . '/private/' . $method;
-    $sign = hash_hmac('sha512', $path . hash('sha256', $request['nonce'] . $postdata, true), base64_decode($this->secret), true);
+    $sign = hash_hmac('sha512', hash('sha256', $request['nonce'] . $postdata, true), base64_decode($this->secret), true);
     $headers = array(
       'API-Key: ' . $this->key,
       'API-Sign: ' . base64_encode($sign)

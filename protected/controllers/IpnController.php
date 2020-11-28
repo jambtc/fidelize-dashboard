@@ -51,8 +51,8 @@ class IpnController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array(
-          'send', // send an order to rules engine
-          'test', //
+          'sendToRulesEngine', // send an order to rules engine
+          'testRulesEngineResponse', //
           'rules', // action where receiving rules engine responses
         ),
 				'users'=>array('*'),
@@ -63,16 +63,24 @@ class IpnController extends Controller
 		);
 	}
 
-  public function actionTest(){
+  public function actionTestRulesEngineResponse(){
+    // echo CJSON::encode($_POST);
+    // // echo '<pre>'.print_r($_POST,true).'</pre>';
+    // exit;
     if (rand(1,10)==1){
-      $return['success'] = 2;
-      $return['message'] = 'Errore nella risposta del Rules Engine!';
+      $success = false;
+      $message = 'Error!';
     }else{
-      $return['success'] = true;
-      $return['message'] = 'Risposta del Rules Engine OK!';
+      $success = true;
+      $message = 'OK!';
     }
 
- 		echo CJSON::encode($return);
+
+ 		echo CJSON::encode([
+      'payload'=>$_POST,
+      'success'=>$success,
+      'message'=>$message,
+    ]);
 
   }
 
@@ -81,7 +89,7 @@ class IpnController extends Controller
 	 * Performs the IPNLOGGER validation.
 	 * @param none
 	 */
-	public function actionSend()
+	public function actionSendToRulesEngine()
 	{
     $save = new Save;
     $save->WriteLog('dashboard','ipn','send','Start Ipn log.');
@@ -93,7 +101,7 @@ class IpnController extends Controller
 		if (false === $raw_post_data) {
       $save->WriteLog('dashboard','ipn','send','Error. Could not read from the php://input stream or invalid IPN received.',true);
 		}else{
-      $save->WriteLog('dashboard','ipn','send','Stream ok.');
+      $save->WriteLog('dashboard','ipn','send','php://input stream is ok.');
 		}
 
     // echo '<pre>'.print_r($_POST,true).'</pre>';
@@ -105,13 +113,13 @@ class IpnController extends Controller
 		if (true === empty($ipn)) {
       $save->WriteLog('dashboard','ipn','send','Error. Could not decode the JSON payload from Server.',true);
 		}else{
-      $save->WriteLog('dashboard','ipn','send','Json ok.');
+      $save->WriteLog('dashboard','ipn','send','Json payload and api keys are ok.');
 		}
 
 		if (true === empty($ipn->id)) {
       $save->WriteLog('dashboard','ipn','send','Error. Invalid Server payment notification message received - did not receive invoice ID.',true);
 		}else{
-      $save->WriteLog('dashboard','ipn','send','Ipn ok.');
+      $save->WriteLog('dashboard','ipn','send','Ipn id loaded is ok.');
 		}
 
 
@@ -121,44 +129,53 @@ class IpnController extends Controller
       $save->WriteLog('dashboard','ipn','send','Error. The requested Settings does not exist.',true);
 
 
-    $rulesAPIKey = $settings->RuleEngineApiKeyPublic;
-    $rulesAPISecret = $settings->RuleEngineApiKeySecret;
-  //  $rulesURL = $settings->RuleEngineUrl;
-    // facciamo finta che sia questo
-    $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/test';
+    // Load client data
+    $client = WalletsBolt::model()->findByAttributes(['id_user'=>$ipn->customer_id]);
+    if($client===null)
+      $save->WriteLog('dashboard','ipn','send','Error. The requested Client Wallet does not exist.',true);
 
+    $save->WriteLog('dashboard','ipn','send','Client wallet address is: '.$client->wallet_address);
 
-    Yii::import('ext.backendAPI.Backend');
-    Yii::import('ext.backendAPI.BackendAPI');
-
-    $api = new Backend($rulesAPIKey,$rulesAPISecret);
-
-    //$proxy = [ 'address' => 'proxy.example.it', 'port' => '8080', 'user' => 'username', 'pass' => 'password' ];
-    //$api->setProxy($proxy);
-    $api->setRulesEngineUrl($rulesURL);
-
-    // echo '<pre>'.print_r($api->getRulesEngineUrl(),true).'</pre>';
+    $ipn->client_address = $client->wallet_address;
+    $ipn->cart_id = $ipn->id;
+    // echo '<pre>'.print_r($ipn,true).'</pre>';
     // exit;
 
 
+    // Send the new Payload to Rules Engine Server
+    Yii::import('ext.backendAPI.Backend');
+    Yii::import('ext.backendAPI.BackendAPI');
+
+    $api = new Backend($settings->RuleEngineApiKeyPublic,$settings->RuleEngineApiKeySecret);
+
+    // use this to set proxy
+    // $proxy = [ 'address' => 'proxy.example.it', 'port' => '8080', 'user' => 'username', 'pass' => 'password' ];
+    // $api->setProxy($proxy);
+
+    // set the Rules Engine URL
+    // facciamo finta che l'indirizzo del Rules engine Server sia questo
+    $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/testRulesEngineResponse';
+    $api->setRulesEngineUrl($rulesURL);
+
+    $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: '.print_r($ipn,true));
 
     $result = $api->send($ipn);
 
     //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
     $save->WriteLog('dashboard','ipn','send',"IPN received for Shopping Cart transaction id: ".$ipn->id);
 
-
     echo CJSON::encode($result);
 
+    // VERIFICARE SE A QUESTO PUNTO SIA DA PRENDERE IN CONSIDERAZIONE SALVARE LA RICHIESTA
+    // ÈER UN SUCCESSIVO INVIO DA PARTE DI UN ALTRO PROCESSO,
+    // OPPURE RIPETERE L'INVIO DAL PLUGIN, IPN, ECC. ECC.
+    // questo per ovviare al fatto che magari il rules engine server è down o
+    // anche semplicemente ha risorse impegnate e non risponde subito .
 
 
 
     // echo '<pre>'.print_r($result,true).'</pre>';
     // exit;
-
-
-
-
 
 
 
