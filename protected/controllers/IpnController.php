@@ -132,7 +132,7 @@ class IpnController extends Controller
     // Load client data
     $client = WalletsBolt::model()->findByAttributes(['id_user'=>$ipn->customer_id]);
     if($client===null)
-      $save->WriteLog('dashboard','ipn','send','Error. The requested Client Wallet does not exist.',true);
+      $save->WriteLog('dashboard','ipn','send','Error. The requested Client Wallet does not exist. Refresh the page to select another `customer_id`',true);
 
     $save->WriteLog('dashboard','ipn','send','Client wallet address is: '.$client->wallet_address);
 
