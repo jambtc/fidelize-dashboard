@@ -91,12 +91,6 @@ class IpnController extends Controller
 	 */
 	public function actionSendToRulesEngine()
 	{
-    // $origin = $_SERVER["HTTP_ORIGIN"];
-    // header('Access-Control-Allow-Origin: ' . $origin);
-    // header('Access-Control-Allow-Credentials: true');
-		// header('Access-Control-Allow-Methods: POST');
-		// header('Access-Control-Allow-Headers: Content-Type');
-
     $save = new Save;
     $save->WriteLog('dashboard','ipn','send','Start Ipn log.');
 
@@ -159,12 +153,15 @@ class IpnController extends Controller
     // $api->setProxy($proxy);
 
     // set the Rules Engine URL
-    // facciamo finta che l'indirizzo del Rules engine Server sia questo
-    $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/testRulesEngineResponse';
+    if (gethostname() == 'CGF6135T'){
+      $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/testRulesEngineResponse';
+    }else{
+      // I use this address to bypass CURL error
+      $rulesURL =	'http://164.68.126.56/index.php?r=ipn/testRulesEngineResponse';
+      // $rulesURL = 'https://dashboard.fidelize.tk/index.php?r=ipn/testRulesEngineResponse';
+    }
     $api->setRulesEngineUrl($rulesURL);
-
     $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: '.print_r($ipn,true));
-
     $result = $api->send($ipn);
 
     //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
