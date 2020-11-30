@@ -69,7 +69,7 @@ class IpnController extends Controller
     // exit;
     if (rand(1,10)==1){
       $success = false;
-      $message = 'Error!';
+      $message = 'Fake error!';
     }else{
       $success = true;
       $message = 'OK!';
