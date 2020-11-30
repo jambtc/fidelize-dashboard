@@ -91,11 +91,11 @@ class IpnController extends Controller
 	 */
 	public function actionSendToRulesEngine()
 	{
-    $origin = $_SERVER["HTTP_ORIGIN"];
-    header('Access-Control-Allow-Origin: ' . $origin);
-    header('Access-Control-Allow-Credentials: true');
-		header('Access-Control-Allow-Methods: POST');
-		header('Access-Control-Allow-Headers: Content-Type');
+    // $origin = $_SERVER["HTTP_ORIGIN"];
+    // header('Access-Control-Allow-Origin: ' . $origin);
+    // header('Access-Control-Allow-Credentials: true');
+		// header('Access-Control-Allow-Methods: POST');
+		// header('Access-Control-Allow-Headers: Content-Type');
 
     $save = new Save;
     $save->WriteLog('dashboard','ipn','send','Start Ipn log.');
