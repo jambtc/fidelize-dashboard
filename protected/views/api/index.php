@@ -22,12 +22,18 @@
 							    'dataProvider'=>$dataProvider,
 								'columns' => array(
 									array(
+							      'name'=>'key_description',
+										'header'=>'key_description',
+										'type'=>'raw',
+										'value' => 'CHtml::link(CHtml::encode($data->key_description), Yii::app()->createUrl("api/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
+							     ),
+									array(
 							      'name'=>'key_public',
 										'header'=>'key_public',
 										'type'=>'raw',
 										'value' => 'CHtml::link(CHtml::encode($data->key_public), Yii::app()->createUrl("api/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
 							     ),
-									 'key_private',
+									 // 'key_private',
 									 array(
 									  'name'=>'',
 									  'value' => '',

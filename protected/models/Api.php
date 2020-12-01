@@ -8,6 +8,7 @@
  * @property integer $id_user
  * @property string $key_public
  * @property string $key_secret
+ * @property string $key_description
  *
  * The followings are the available model relations:
  * @property Users $idUser
@@ -30,13 +31,13 @@ class Api extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id_user, key_public, key_secret', 'required'),
+            array('id_user, key_public, key_secret, key_description', 'required'),
             array('id_user', 'numerical', 'integerOnly'=>true),
             array('key_public', 'length', 'max'=>50),
-            array('key_secret', 'length', 'max'=>200),
+            array('key_secret, key_description', 'length', 'max'=>200),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id_api, id_user, key_public, key_secret', 'safe', 'on'=>'search'),
+            array('id_api, id_user, key_public, key_secret, key_description', 'safe', 'on'=>'search'),
         );
     }
 
@@ -60,8 +61,9 @@ class Api extends CActiveRecord
         return array(
             'id_api' => 'Id Api',
             'id_user' => 'Id User',
-            'key_public' => 'Key Public',
-            'key_secret' => 'Key Secret',
+            'key_public' => 'API Key Public',
+            'key_secret' => 'API Key Secret',
+            'key_description' => 'Key Description',
         );
     }
 
@@ -87,6 +89,7 @@ class Api extends CActiveRecord
         $criteria->compare('id_user',$this->id_user);
         $criteria->compare('key_public',$this->key_public,true);
         $criteria->compare('key_secret',$this->key_secret,true);
+        $criteria->compare('key_description',$this->key_description,true);
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
