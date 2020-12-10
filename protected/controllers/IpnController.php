@@ -123,7 +123,7 @@ class IpnController extends Controller
 		}
 
 
-    // PAUSE - VEDIAMO FINO A QUI CHE SUCCEDE
+    // CARICO le impostazioni
     $settings=Settings::load();
 		if($settings===null)
       $save->WriteLog('dashboard','ipn','send','Error. The requested Settings does not exist.',true);
@@ -137,7 +137,12 @@ class IpnController extends Controller
     $save->WriteLog('dashboard','ipn','send','Client wallet address is: '.$client->wallet_address);
 
     $ipn->client_address = $client->wallet_address;
-    $ipn->cart_id = $ipn->id;
+    $identifier = explode(":",$ipn->id);
+
+    if (!(isset($identifier[1])))
+      $ipn->cart_id = $ipn->id;
+    else
+      $ipn->cart_id = $identifier[1];
     // echo '<pre>'.print_r($ipn,true).'</pre>';
     // exit;
 
@@ -176,14 +181,8 @@ class IpnController extends Controller
     // anche semplicemente ha risorse impegnate e non risponde subito .
 
 
-
     // echo '<pre>'.print_r($result,true).'</pre>';
     // exit;
-
-
-
-		//ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
-    //$save->WriteLog('dashboard','ipn','send',"End: IPN received for Server transaction ".$invoice->getId()." . Status = " .$invoice->getStatus()." Price = ". $invoice->getPrice(). " Paid = ".$invoice->getBtcPaid());
 
 		//Respond with HTTP 200, so BitPay knows the IPN has been received correctly
 		//If BitPay receives <> HTTP 200, then BitPay will try to send the IPN again with increasing intervals for two more hours.
