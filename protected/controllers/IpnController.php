@@ -20,8 +20,7 @@ class IpnController extends Controller
 
   }
 
-  /** Production Postback URL */
-  const RULESENGINE_URI = 'https://rules.engine.com';
+
 
 
 	/**
@@ -143,6 +142,7 @@ class IpnController extends Controller
       $ipn->cart_id = $ipn->id;
     else
       $ipn->cart_id = $identifier[1];
+
     // echo '<pre>'.print_r($ipn,true).'</pre>';
     // exit;
 
@@ -151,23 +151,19 @@ class IpnController extends Controller
     Yii::import('ext.backendAPI.Backend');
     Yii::import('ext.backendAPI.BackendAPI');
 
-    $api = new Backend($settings->RuleEngineApiKeyPublic,$settings->RuleEngineApiKeySecret);
+    $api = new Backend($settings->RulesEngineApiKeyPublic,$settings->RulesEngineApiKeySecret);
 
     // use this to set proxy
     // $proxy = [ 'address' => 'proxy.example.it', 'port' => '8080', 'user' => 'username', 'pass' => 'password' ];
     // $api->setProxy($proxy);
 
-    // set the Rules Engine URL
-    if (gethostname() == 'CGF6135T'){
-      $rulesURL = 'http://localhost/fidelize-dashboard/index.php?r=ipn/testRulesEngineResponse';
-    }else{
-      // I use this address to bypass CURL error
-      $rulesURL =	'http://164.68.126.56/index.php?r=ipn/testRulesEngineResponse';
-      // $rulesURL = 'https://dashboard.fidelize.tk/index.php?r=ipn/testRulesEngineResponse';
-    }
-    $api->setRulesEngineUrl($rulesURL);
+
+    $api->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
     $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: '.print_r($ipn,true));
     $result = $api->send($ipn);
+
+    // echo '<pre>'.print_r($result,true).'</pre>';
+    // exit;
 
     //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
     $save->WriteLog('dashboard','ipn','send',"IPN received for Shopping Cart transaction id: ".$ipn->id);

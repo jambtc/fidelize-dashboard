@@ -80,13 +80,13 @@ class SettingsController extends Controller
 		$model = new SettingsWebappForm;
 		$settings= Settings::load();
 		$model->attributes = (array)$settings;
-		$model->RuleEngineApiKeyPublic = "";
-		$model->RuleEngineApiKeySecret = "";
+		$model->RulesEngineApiKeyPublic = "";
+		$model->RulesEngineApiKeySecret = "";
 		Settings::save($model);
 
 		echo CJSON::encode([
-			'public'=>$model->RuleEngineApiKeyPublic,
-			'secret'=>$model->RuleEngineApiKeySecret
+			'public'=>$model->RulesEngineApiKeyPublic,
+			'secret'=>$model->RulesEngineApiKeySecret
 		]);
 	}
 
@@ -137,9 +137,9 @@ class SettingsController extends Controller
 				$model->attributes=$_POST['SettingsWebappForm'];
 				// echo '<pre>'.print_r($model->attributes,true).'</pre>';
 				// exit;
-				if (isset($_POST['SettingsWebappForm']['RuleEngineApiKeySecret'])){
+				if (isset($_POST['SettingsWebappForm']['RulesEngineApiKeySecret'])){
 					// $model->RuleEngineApiKeyPublic = crypt::Encrypt($_POST['SettingsWebappForm']['RuleEngineApiKeyPublic']);
-					$model->RuleEngineApiKeySecret = md5($_POST['SettingsWebappForm']['RuleEngineApiKeyPublic'].$_POST['SettingsWebappForm']['RuleEngineApiKeySecret']);
+					$model->RulesEngineApiKeySecret = md5($_POST['SettingsWebappForm']['RulesEngineApiKeyPublic'].$_POST['SettingsWebappForm']['RulesEngineApiKeySecret']);
 				}
 
 				if (isset($_POST['SettingsWebappForm']['sshhost'])){

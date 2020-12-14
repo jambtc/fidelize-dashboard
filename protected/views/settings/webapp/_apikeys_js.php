@@ -30,8 +30,8 @@ $myScript = <<<JS
 				complete: function (json) {
 					js = json.responseJSON;
 
-					$('#SettingsWebappForm_RuleEngineApiKeyPublic').val(js.public);
-          $('#SettingsWebappForm_RuleEngineApiKeySecret').val(js.secret);
+					$('#SettingsWebappForm_RulesEngineApiKeyPublic').val(js.public);
+          $('#SettingsWebappForm_RulesEngineApiKeySecret').val(js.secret);
           $('#onechance').show();
 				}
 			});
@@ -44,8 +44,8 @@ $myScript = <<<JS
 				complete: function (json) {
 					js = json.responseJSON;
           //console.log('Response apikeys:',js)
-					$('#SettingsWebappForm_RuleEngineApiKeyPublic').val(js.public);
-          $('#SettingsWebappForm_RuleEngineApiKeySecret').val(js.secret);
+					$('#SettingsWebappForm_RulesEngineApiKeyPublic').val(js.public);
+          $('#SettingsWebappForm_RulesEngineApiKeySecret').val(js.secret);
           window.location.href = window.location.href;
 				}
 			});

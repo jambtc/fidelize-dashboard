@@ -20,33 +20,38 @@ include ('_apikeys_js.php');
 					<div class="form-group">
 						<br>
 						<?php
-						if (empty($model->RuleEngineApiKeySecret))
+						if (empty($model->RulesEngineApiKeySecret))
 							echo CHtml::Button('Create', array('class' => 'btn btn-success','id'=>'btnApikeysCreate'));
 
 						?>
 					</div>
-
 				</p>
 			</div>
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'RuleEngineApiKeyPublic'); ?>
-				<?php echo $form->textField($model,'RuleEngineApiKeyPublic',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true)); ?>
-				<?php echo $form->error($model,'RuleEngineApiKeyPublic',array('class'=>'alert alert-danger')); ?>
+				<?php echo $form->labelEx($model,'RulesEngineApiKeyURL'); ?>
+				<?php echo $form->textField($model,'RulesEngineApiKeyURL',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>(empty($model->RulesEngineApiKeySecret)?false:true))); ?>
+				<?php echo $form->error($model,'RulesEngineApiKeyURL',array('class'=>'alert alert-danger')); ?>
 			</div>
 
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'RuleEngineApiKeySecret'); ?>
+				<?php echo $form->labelEx($model,'RulesEngineApiKeyPublic'); ?>
+				<?php echo $form->textField($model,'RulesEngineApiKeyPublic',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true)); ?>
+				<?php echo $form->error($model,'RulesEngineApiKeyPublic',array('class'=>'alert alert-danger')); ?>
+			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'RulesEngineApiKeySecret'); ?>
 				<?php
-					if (empty($model->RuleEngineApiKeySecret)){
-						echo $form->textField($model,'RuleEngineApiKeySecret',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true));
+					if (empty($model->RulesEngineApiKeySecret)){
+						echo $form->textField($model,'RulesEngineApiKeySecret',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true));
 						?>
 						<p class="text-light bg-info" id="onechance" style="display:none;">This is your only chance to copy the private key, as it will no longer be shown</p>
 						<?php
 					}
 					else
-						echo $form->passwordField($model,'RuleEngineApiKeySecret',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true));
+						echo $form->passwordField($model,'RulesEngineApiKeySecret',array('size'=>50,'maxlength'=>150,'class'=>'form-control','readonly'=>true));
 					?>
-				<?php echo $form->error($model,'RuleEngineApiKeySecret',array('class'=>'alert alert-danger')); ?>
+				<?php echo $form->error($model,'RulesEngineApiKeySecret',array('class'=>'alert alert-danger')); ?>
 			</div>
 		</div>
 	</div>
@@ -56,7 +61,7 @@ include ('_apikeys_js.php');
 	<div class="form-group">
 		<br>
 		<?php
-		if (empty($model->RuleEngineApiKeySecret))
+		if (empty($model->RulesEngineApiKeySecret))
 			echo CHtml::submitButton('Conferma', array('class' => 'btn btn-primary'));
 		else{
 			?>

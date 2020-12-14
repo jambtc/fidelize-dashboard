@@ -49,6 +49,13 @@ class BackendAPI
     curl_close($this->curl);
   }
 
+  private function error($e,$r){
+    $msg['error'] = $e;
+    $msg['description'] = $r;
+    echo CJSON::encode($msg);
+    die();
+  }
+
   /**
   * @param url Url of Rules Engine server
   */
@@ -120,13 +127,15 @@ class BackendAPI
     curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
     $result = curl_exec($this->curl);
     if($result===false)
-        throw new BackendAPIException ('CURL error: ' . curl_error($this->curl));
+      throw new BackendAPIException ('CURL error: ' . curl_error($this->curl));
+
+
 
     // decode results
-    $result = json_decode($result, true);
-    if(!is_array($result))
-        throw new BackendAPIException ('JSON decode error');
+    $res = json_decode($result, true);
+    if(!is_array($res))
+      BackendAPI::error('JSON decode error',$result);
 
-    return $result;
+    return $res;
   }
 }

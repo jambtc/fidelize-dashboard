@@ -101,8 +101,9 @@ class SettingsWebappForm extends CFormModel
 	public $PAYPAL_MODE;
 
 	// APY KEYS FOR RULE Engine
-	public $RuleEngineApiKeyPublic;
-	public $RuleEngineApiKeySecret;
+	public $RulesEngineApiKeyPublic;
+	public $RulesEngineApiKeySecret;
+	public $RulesEngineApiKeyURL;
 
 
 	/**
@@ -125,7 +126,7 @@ class SettingsWebappForm extends CFormModel
 			array('pos_sin, pos_denomination, gdpr_vat, gdpr_telefono, gdpr_fax, gdpr_email, gdpr_dpo_email, gdpr_dpo_telefono', 'length', 'max'=>50),
 			array('VapidPublic,VapidSecret,reCaptcha2PublicKey,reCaptcha2PrivateKey', 'length', 'max'=>150),
 			array('PAYPAL_CLIENT_ID,PAYPAL_CLIENT_SECRET,PAYPAL_MODE', 'length', 'max'=>150),
-			array('fileSystemStorageKey,RuleEngineApiKeyPublic,RuleEngineApiKeySecret', 'length', 'max'=>150),
+			array('fileSystemStorageKey,RulesEngineApiKeyPublic,RulesEngineApiKeySecret,RulesEngineApiKeyURL', 'length', 'max'=>150),
 			array('GoogleOauthClientId,GoogleOauthClientSecret,facebookAppID,facebookAppVersion,telegramBotName,telegramToken', 'length', 'max'=>150),
 
 		);
@@ -211,8 +212,9 @@ class SettingsWebappForm extends CFormModel
 			'fileSystemStorageKey' => Yii::t('model','File System Storage Key'),
 
 
-			'RuleEngineApiKeyPublic' => Yii::t('model','Public Key'),
-			'RuleEngineApiKeySecret' => Yii::t('model','Private Key'),
+			'RulesEngineApiKeyPublic' => Yii::t('model','Public Key'),
+			'RulesEngineApiKeySecret' => Yii::t('model','Private Key'),
+			'RulesEngineApiKeyURL' => Yii::t('model','Rules Engine URL'),
 
 		);
 	}
