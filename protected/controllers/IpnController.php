@@ -90,6 +90,16 @@ class IpnController extends Controller
 	 */
 	public function actionSendToRulesEngine()
 	{
+    $origin = $_SERVER['HTTP_ORIGIN'];
+    $allowed_domains = [
+        'https://shopping.fidelize.tk',
+    ];
+
+    if (in_array($origin, $allowed_domains)) {
+      header('Access-Control-Allow-Origin: ' . $origin);
+    }
+
+
     $save = new Save;
     $save->WriteLog('dashboard','ipn','send','Start Ipn log.');
 
