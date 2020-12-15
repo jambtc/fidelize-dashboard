@@ -90,16 +90,6 @@ class IpnController extends Controller
 	 */
 	public function actionSendToRulesEngine()
 	{
-    $origin = $_SERVER['HTTP_ORIGIN'];
-    $allowed_domains = [
-        'https://shopping.fidelize.tk',
-    ];
-
-    if (in_array($origin, $allowed_domains)) {
-      header('Access-Control-Allow-Origin: ' . $origin);
-    }
-
-
     $save = new Save;
     $save->WriteLog('dashboard','ipn','send','Start Ipn log.');
 
@@ -113,12 +103,26 @@ class IpnController extends Controller
       $save->WriteLog('dashboard','ipn','send','php://input stream is ok.');
 		}
 
-    // echo '<pre>'.print_r($_POST,true).'</pre>';
-    // echo '<pre>'.print_r($raw_post_data,true).'</pre>';
+    $post = $_POST;
+		if (false === $post) {
+      $save->WriteLog('dashboard','ipn','send','Error. Could not read from the $_POST stream or invalid IPN received.',true);
+		}else{
+      $save->WriteLog('dashboard','ipn','send','$_POST stream is ok.');
+		}
+
+
+    //  echo 'a<pre>'.print_r($_POST,true).'</pre>';
+    // // // echo '<pre>'.print_r($raw_post_data,true).'</pre>';
+    //  exit;
 
     // VERIFICO CHE I DATI INVIATI SIANO CORRETTI
     Yii::import('ext.APIKeys');
-    $ipn = json_decode(APIKeys::check(json_decode($raw_post_data)));
+    $ipn = (object) APIKeys::check();
+
+    // echo 'ipn <pre>'.print_r($ipn,true).'</pre>';
+    // exit;
+
+    // $ipn = json_decode(APIKeys::check(json_decode($raw_post_data)));
 		if (true === empty($ipn)) {
       $save->WriteLog('dashboard','ipn','send','Error. Could not decode the JSON payload from Server.',true);
 		}else{
@@ -153,9 +157,7 @@ class IpnController extends Controller
     else
       $ipn->cart_id = $identifier[1];
 
-    // echo '<pre>'.print_r($ipn,true).'</pre>';
-    // exit;
-
+    $save->WriteLog('dashboard','ipn','send','Ipn is: '.print_r($ipn,true));
 
     // Send the new Payload to Rules Engine Server
     Yii::import('ext.backendAPI.Backend');
@@ -176,9 +178,9 @@ class IpnController extends Controller
     // exit;
 
     //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
-    $save->WriteLog('dashboard','ipn','send',"IPN received for Shopping Cart transaction id: ".$ipn->id);
+    $save->WriteLog('dashboard','ipn','send',"Response of server is: ".$result);
 
-    echo CJSON::encode($result);
+    echo CJSON::encode(['result'=>$result]);
 
     // VERIFICARE SE A QUESTO PUNTO SIA DA PRENDERE IN CONSIDERAZIONE SALVARE LA RICHIESTA
     // ÈER UN SUCCESSIVO INVIO DA PARTE DI UN ALTRO PROCESSO,

@@ -9,7 +9,7 @@ class APIKeys
    *
    * @param array $request is the POST message
   */
-  public function check($request)
+  public function check()
   {
     if (!function_exists('getallheaders')) {
       function getallheaders() {
@@ -23,14 +23,17 @@ class APIKeys
       }
     }
 
-    $securityToken = null;
-    $post = json_decode($_POST['data']);
+    // echo '<pre>apikeys'.print_r($_POST,true).'</pre>';
+    // exit;
+
+    // $post = json_decode($_POST['data']);
+    $post = $_POST;
     $headers = getallheaders();
 
     // check if the message is outdated
     $microtime = explode(' ', microtime());
     $nonce = $microtime[1] . str_pad(substr($microtime[0], 2, 6), 6, '0');
-    if (($nonce/1000000 - $post->nonce/1000000) > NONCE_STEP)
+    if (($nonce/1000000 - $post['nonce']/1000000) > NONCE_STEP)
       die (json_encode(['success'=>false,'message'=>'Data is outdated!']));
 
     foreach ($headers as $name => $value) {
@@ -41,16 +44,18 @@ class APIKeys
           die (json_encode(['success'=>false,'message'=>'Public key doesn\'t exist!']));
 
         // Now we re-generate the POST hash
-        $request['data'] = print_r($post->data,true);
-        $request['nonce'] = $post->nonce;
-        $postdata = http_build_query($request, '', '&');
+        // $request['data'] = print_r($post->data,true);
+        // $request['nonce'] = $post->nonce;
+        // $postdata = http_build_query($request, '', '&');
 
-        $sign = base64_encode(hash_hmac('sha512', hash('sha256', $post->nonce . $postdata, true), base64_decode($model->key_secret), true));
+        $postdata = http_build_query($post, '', '&');
+
+        $sign = base64_encode(hash_hmac('sha512', hash('sha256', $post['nonce'] . $postdata, true), base64_decode($model->key_secret), true));
 
         if (strcmp($sign, $headers['API-Sign']) !== 0)
           die (json_encode(['success'=>false,'message'=>'Api keys are invalid!']));
 
-        return $post->data;
+        return $post;
       }
     }
   }

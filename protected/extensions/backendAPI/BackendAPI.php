@@ -52,8 +52,9 @@ class BackendAPI
   private function error($e,$r){
     $msg['error'] = $e;
     $msg['description'] = $r;
-    echo CJSON::encode($msg);
-    die();
+    throw new BackendAPIException($e." - ". $r);
+    // echo CJSON::encode($msg);
+    // die();
   }
 
   /**
@@ -130,12 +131,13 @@ class BackendAPI
       throw new BackendAPIException ('CURL error: ' . curl_error($this->curl));
 
 
+    return $result;
 
     // decode results
-    $res = json_decode($result, true);
-    if(!is_array($res))
-      BackendAPI::error('JSON decode error',$result);
+    // $res = json_decode($result, true);
+    // if(!is_array($res))
+    //   BackendAPI::error('JSON decode error',$result);
 
-    return $res;
+    // return $res;
   }
 }
