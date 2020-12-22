@@ -50,12 +50,9 @@ class APIKeys
         }
 
         // Now we re-generate the POST hash
-        // $request['data'] = print_r($post->data,true);
-        // $request['nonce'] = $post->nonce;
-        // $postdata = http_build_query($request, '', '&');
-
         $postdata = http_build_query($post, '', '&');
 
+        // Now do the sign 
         $sign = base64_encode(hash_hmac('sha512', hash('sha256', $post['nonce'] . $postdata, true), base64_decode($model->key_secret), true));
 
         if (strcmp($sign, $headers['API-Sign']) !== 0){

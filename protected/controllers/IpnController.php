@@ -136,6 +136,7 @@ class IpnController extends Controller
 		}else{
       $save->WriteLog('dashboard','ipn','send','$_POST stream is ok.');
 		}
+    $save->WriteLog('dashboard','ipn','send','Received _POST is:<pre>'.print_r($post,true).'</pre>');
 
 
     //  echo 'a<pre>'.print_r($_POST,true).'</pre>';
@@ -156,7 +157,10 @@ class IpnController extends Controller
       $save->WriteLog('dashboard','ipn','send','Json payload and api keys are ok.');
 		}
 
-		if (true === empty($ipn->id)) {
+    $payload = (object) $ipn->event;
+    $save->WriteLog('dashboard','ipn','send','Payload is: <pre>'.print_r($payload,true).'</pre>');
+
+		if (true === empty($payload->id)) {
       $save->WriteLog('dashboard','ipn','send','Error. Invalid Server payment notification message received - did not receive invoice ID.',true);
 		}else{
       $save->WriteLog('dashboard','ipn','send','Ipn id loaded is ok.');
@@ -170,21 +174,23 @@ class IpnController extends Controller
 
 
     // Load client data
-    $client = WalletsBolt::model()->findByAttributes(['id_user'=>$ipn->customer_id]);
+    $client = WalletsBolt::model()->findByAttributes(['id_user'=>$payload->customer_id]);
     if($client===null)
       $save->WriteLog('dashboard','ipn','send','Error. The requested Client Wallet does not exist. Refresh the page to select another `customer_id`',true);
 
     $save->WriteLog('dashboard','ipn','send','Client wallet address is: '.$client->wallet_address);
 
-    $ipn->client_address = $client->wallet_address;
-    $identifier = explode(":",$ipn->id);
+    $payload->client_address = $client->wallet_address;
+    $identifier = explode(":",$payload->id);
 
     if (!(isset($identifier[1])))
-      $ipn->cart_id = $ipn->id;
+      $payload->cart_id = $payload->id;
     else
-      $ipn->cart_id = $identifier[1];
+      $payload->cart_id = $identifier[1];
 
-    $save->WriteLog('dashboard','ipn','send','Ipn is: <pre>'.print_r($ipn,true).'</pre>');
+    // generate the new payload
+    $ipn->event = $payload;
+    $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: <pre>'.print_r($ipn,true).'</pre>');
 
     // Send the new Payload to Rules Engine Server
     Yii::import('ext.backendAPI.Backend');
@@ -199,7 +205,7 @@ class IpnController extends Controller
     /**
     * GENERATE THE HEADERS
     */
-    // build the POST data string
+    // build the POST data string with the original payload
     $postdata = http_build_query($ipn, '', '&');
 
     // set API key and sign the message
@@ -207,17 +213,16 @@ class IpnController extends Controller
     $headers = array(
       'API-Key: ' . $settings->RulesEngineApiKeyPublic,
       'API-Sign: ' . base64_encode($sign),
-      'x-fre-origin: '. $ipn->merchant_id,
+      'x-fre-origin: '. $payload->merchant_id,
       'Authorization: ' . $settings->RulesEngineApiKeyPublic,
-      'content-type: application/json',
-      'accept: application/json',
+      'Content-Ttype: application/json',
+      'Accept: application/json',
     );
     /////////////////
 
 
     $api->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
     $save->WriteLog('dashboard','ipn','send','New Header to Rules Engine Server is: <pre>'.print_r($headers,true).'</pre>');
-    $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: <pre>'.print_r($ipn,true).'</pre>');
     $result = $api->send($ipn);
 
     // echo '<pre>'.print_r($result,true).'</pre>';

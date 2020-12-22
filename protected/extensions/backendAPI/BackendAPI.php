@@ -105,6 +105,11 @@ class BackendAPI
         $request['nonce'] = $nonce[1] . str_pad(substr($nonce[0], 2, 6), 6, '0');
     }
 
+// $save = new Save;
+// $save->WriteLog('dashboard','backendAPI','queryprivate','Request array to Rules Engine Server is: <pre>'.print_r($request,true).'</pre>');
+//     echo '<pre>'.print_r($request,true).'</pre>';
+//     exit;
+
     // build the POST data string
     $postdata = http_build_query($request, '', '&');
 
@@ -113,7 +118,7 @@ class BackendAPI
     $headers = array(
       'API-Key: ' . $this->key,
       'API-Sign: ' . base64_encode($sign),
-      'x-fre-origin: '. $request['merchant_id'],
+      'x-fre-origin: '. $request['event']->merchant_id,
       'Authorization: ' . $this->key,
       'Content-Type: application/json',
       'accept: application/json',
