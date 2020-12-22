@@ -112,7 +112,11 @@ class BackendAPI
     $sign = hash_hmac('sha512', hash('sha256', $request['nonce'] . $postdata, true), base64_decode($this->secret), true);
     $headers = array(
       'API-Key: ' . $this->key,
-      'API-Sign: ' . base64_encode($sign)
+      'API-Sign: ' . base64_encode($sign),
+      'x-fre-origin: '. $request['merchant_id'],
+      'Authorization: ' . $this->key,
+      'Content-Type: application/json',
+      'accept: application/json',
     );
 
 		// set proxy
@@ -122,9 +126,12 @@ class BackendAPI
 			curl_setopt($this->curl, CURLOPT_PROXYUSERPWD, $this->proxyuserpwd);
 		}
 
+    // transofmr the paylod in json format
+    $payload = json_encode($request);
+
     // make request
     curl_setopt($this->curl, CURLOPT_URL, $this->url . $path);
-    curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
+    curl_setopt($this->curl, CURLOPT_POSTFIELDS, $payload); // IN JSON FORMAT to RULES ENGINE!!!
     curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
     $result = curl_exec($this->curl);
     if($result===false)

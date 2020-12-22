@@ -61,6 +61,28 @@ class IpnController extends Controller
 			),
 		);
 	}
+  public function actionRules()
+  {
+    if (rand(1,10)==1){
+      $success = false;
+      $message = 'Fake error!';
+    }else{
+      $success = true;
+      $message = 'OK!';
+    }
+
+    $response = [
+      'payload'=>$_POST,
+      'headers'=>getallheaders(),
+      'success'=>$success,
+      'message'=>$message,
+    ];
+
+    $save = new Save;
+    $save->WriteLog('dashboard','ipn','rules','<pre>'.print_r($response,true).'</pre>');
+
+    echo CJSON::encode($response);
+  }
 
   public function actionTestRulesEngineResponse(){
     // echo CJSON::encode($_POST);
@@ -74,12 +96,17 @@ class IpnController extends Controller
       $message = 'OK!';
     }
 
-
- 		echo CJSON::encode([
+    $response = [
       'payload'=>$_POST,
+      'headers'=>getallheaders(),
       'success'=>$success,
       'message'=>$message,
-    ]);
+    ];
+
+    $save = new Save;
+    $save->WriteLog('dashboard','ipn','fake rules','<pre>'.print_r($response,true).'</pre>');
+
+    echo CJSON::encode($response);
 
   }
 
@@ -157,7 +184,7 @@ class IpnController extends Controller
     else
       $ipn->cart_id = $identifier[1];
 
-    $save->WriteLog('dashboard','ipn','send','Ipn is: '.print_r($ipn,true));
+    $save->WriteLog('dashboard','ipn','send','Ipn is: <pre>'.print_r($ipn,true).'</pre>');
 
     // Send the new Payload to Rules Engine Server
     Yii::import('ext.backendAPI.Backend');
@@ -169,9 +196,28 @@ class IpnController extends Controller
     // $proxy = [ 'address' => 'proxy.example.it', 'port' => '8080', 'user' => 'username', 'pass' => 'password' ];
     // $api->setProxy($proxy);
 
+    /**
+    * GENERATE THE HEADERS
+    */
+    // build the POST data string
+    $postdata = http_build_query($ipn, '', '&');
+
+    // set API key and sign the message
+    $sign = hash_hmac('sha512', hash('sha256', $ipn->nonce . $postdata, true), base64_decode($settings->RulesEngineApiKeySecret), true);
+    $headers = array(
+      'API-Key: ' . $settings->RulesEngineApiKeyPublic,
+      'API-Sign: ' . base64_encode($sign),
+      'x-fre-origin: '. $ipn->merchant_id,
+      'Authorization: ' . $settings->RulesEngineApiKeyPublic,
+      'content-type: application/json',
+      'accept: application/json',
+    );
+    /////////////////
+
 
     $api->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
-    $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: '.print_r($ipn,true));
+    $save->WriteLog('dashboard','ipn','send','New Header to Rules Engine Server is: <pre>'.print_r($headers,true).'</pre>');
+    $save->WriteLog('dashboard','ipn','send','New Payload to Rules Engine Server is: <pre>'.print_r($ipn,true).'</pre>');
     $result = $api->send($ipn);
 
     // echo '<pre>'.print_r($result,true).'</pre>';
