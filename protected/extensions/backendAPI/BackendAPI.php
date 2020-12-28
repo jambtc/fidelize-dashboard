@@ -98,23 +98,18 @@ class BackendAPI
   */
   function QueryPrivate($path, array $request = array())
   {
-    if(!isset($request['nonce'])) {
-        // generate a 64 bit nonce using a timestamp at microsecond resolution
-        // string functions are used to avoid problems on 32 bit systems
-        $nonce = explode(' ', microtime());
-        $request['nonce'] = $nonce[1] . str_pad(substr($nonce[0], 2, 6), 6, '0');
-    }
 
 // $save = new Save;
 // $save->WriteLog('dashboard','backendAPI','queryprivate','Request array to Rules Engine Server is: <pre>'.print_r($request,true).'</pre>');
-//     echo '<pre>'.print_r($request,true).'</pre>';
-//     exit;
+// echo '<pre>'.print_r($request,true).'</pre>';
+// exit;
+
 
     // build the POST data string
     $postdata = http_build_query($request, '', '&');
 
     // set API key and sign the message
-    $sign = hash_hmac('sha512', hash('sha256', $request['nonce'] . $postdata, true), base64_decode($this->secret), true);
+    $sign = hash_hmac('sha512', hash('sha256', $request['event']->nonce . $postdata, true), base64_decode($this->secret), true);
     $headers = array(
       'API-Key: ' . $this->key,
       'API-Sign: ' . base64_encode($sign),
@@ -132,7 +127,11 @@ class BackendAPI
 		}
 
     // transofmr the paylod in json format
-    $payload = json_encode($request);
+    $payload = json_encode($request, JSON_NUMERIC_CHECK);
+    // $payload = json_encode($request);
+    // $payload = CJSON::encode($request, JSON_NUMERIC_CHECK);
+    $save = new Save;
+    $save->WriteLog('dashboard','ipn','backendAPI','Payload in json format is: <pre>'.print_r($payload,true).'</pre>');
 
     // make request
     curl_setopt($this->curl, CURLOPT_URL, $this->url . $path);

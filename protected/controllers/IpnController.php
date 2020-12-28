@@ -166,7 +166,6 @@ class IpnController extends Controller
       $save->WriteLog('dashboard','ipn','send','Ipn id loaded is ok.');
 		}
 
-
     // CARICO le impostazioni
     $settings=Settings::load();
 		if($settings===null)
@@ -180,6 +179,7 @@ class IpnController extends Controller
 
     $save->WriteLog('dashboard','ipn','send','Client wallet address is: '.$client->wallet_address);
 
+    // aggiungo il wallet address
     $payload->client_address = $client->wallet_address;
     $identifier = explode(":",$payload->id);
 
@@ -187,6 +187,17 @@ class IpnController extends Controller
       $payload->cart_id = $payload->id;
     else
       $payload->cart_id = $identifier[1];
+
+    // FIX to JSON_NUMERIC_CHECK
+    $payload->merchant_id = (string) $payload->merchant_id;
+
+
+      // //TEST ELIMINARE items diversi dal payload del rule engine .
+      // unset($payload->id);
+      // unset($payload->redirect_url);
+      // unset($payload->customer_id);
+      // unset($payload->order_number);
+      // unset($payload->order_total);
 
     // generate the new payload
     $ipn->event = $payload;
@@ -209,7 +220,7 @@ class IpnController extends Controller
     $postdata = http_build_query($ipn, '', '&');
 
     // set API key and sign the message
-    $sign = hash_hmac('sha512', hash('sha256', $ipn->nonce . $postdata, true), base64_decode($settings->RulesEngineApiKeySecret), true);
+    $sign = hash_hmac('sha512', hash('sha256', $payload->nonce . $postdata, true), base64_decode($settings->RulesEngineApiKeySecret), true);
     $headers = array(
       'API-Key: ' . $settings->RulesEngineApiKeyPublic,
       'API-Sign: ' . base64_encode($sign),
@@ -231,7 +242,7 @@ class IpnController extends Controller
     //ADESSO POSSO USCIRE CON UN MESSAGGIO POSITIVO ;^)
     $save->WriteLog('dashboard','ipn','send',"Response of server is: ".$result);
 
-    echo CJSON::encode(['result'=>$result]);
+    // echo CJSON::encode(['result'=>$result]);
 
     // VERIFICARE SE A QUESTO PUNTO SIA DA PRENDERE IN CONSIDERAZIONE SALVARE LA RICHIESTA
     // ÈER UN SUCCESSIVO INVIO DA PARTE DI UN ALTRO PROCESSO,

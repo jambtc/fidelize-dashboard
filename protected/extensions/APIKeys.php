@@ -29,13 +29,19 @@ class APIKeys
     // exit;
 
     // $post = json_decode($_POST['data']);
-    $post = $_POST;
+    $event = (object) $_POST['event'];
     $headers = getallheaders();
+
+    // check if isset nonce
+    if (!(isset($event->nonce))){
+      $save->WriteLog('dashboard','ipn','APIKeys','Nonce isn\'t set! POST is:<pre>'.print_r($_POST,true).'</pre>');
+      die (json_encode(['success'=>false,'message'=>'Nonce isn\'t set!']));
+    }
 
     // check if the message is outdated
     $microtime = explode(' ', microtime());
     $nonce = $microtime[1] . str_pad(substr($microtime[0], 2, 6), 6, '0');
-    if (($nonce/1000000 - $post['nonce']/1000000) > NONCE_STEP){
+    if (($nonce/1000000 - $event->nonce/1000000) > NONCE_STEP){
       $save->WriteLog('dashboard','ipn','APIKeys','Data is outdated!');
       die (json_encode(['success'=>false,'message'=>'Data is outdated!']));
     }
@@ -50,17 +56,18 @@ class APIKeys
         }
 
         // Now we re-generate the POST hash
-        $postdata = http_build_query($post, '', '&');
+        $postdata = http_build_query($_POST, '', '&');
 
-        // Now do the sign 
-        $sign = base64_encode(hash_hmac('sha512', hash('sha256', $post['nonce'] . $postdata, true), base64_decode($model->key_secret), true));
+        // Now do the sign
+        $sign = base64_encode(hash_hmac('sha512', hash('sha256', $event->nonce . $postdata, true), base64_decode($model->key_secret), true));
 
+        // compare the two signatures
         if (strcmp($sign, $headers['API-Sign']) !== 0){
           $save->WriteLog('dashboard','ipn','APIKeys','Api keys are invalid!');
           die (json_encode(['success'=>false,'message'=>'Api keys are invalid!']));
         }
 
-        return $post;
+        return $_POST;
       }
     }
   }
