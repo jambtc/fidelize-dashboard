@@ -127,11 +127,14 @@ class BackendAPI
 		}
 
     // transofmr the paylod in json format
-    $payload = json_encode($request, JSON_NUMERIC_CHECK);
-    // $payload = json_encode($request);
+    // $payload = json_encode($request, JSON_NUMERIC_CHECK);
+    // $payload = json_encode($request, JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
+    $payload = json_encode($request);
     // $payload = CJSON::encode($request, JSON_NUMERIC_CHECK);
-    $save = new Save;
-    $save->WriteLog('dashboard','ipn','backendAPI','Payload in json format is: <pre>'.print_r($payload,true).'</pre>');
+
+    // $save = new Save;
+    // $save->WriteLog('dashboard','ipn','backendAPI','New Header to Rules Engine Server is: <pre>'.print_r($headers,true).'</pre>');
+    // $save->WriteLog('dashboard','ipn','backendAPI','Payload in json format is: <pre>'.print_r(json_encode($request,JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT),true).'</pre>');
 
     // make request
     curl_setopt($this->curl, CURLOPT_URL, $this->url . $path);
