@@ -106,7 +106,7 @@ class BackendAPI
 
 
     // build the POST data string
-    $postdata = http_build_query($request, '', '&');
+    // $postdata = http_build_query($request, '', '&'); NON SERVE PIù IL POST DATA BENSI IL PAYLOAD IN FORMATO JSON
 
     // set API key and sign the message
     $sign = hash_hmac('sha512', hash('sha256', $request['event']->nonce . $postdata, true), base64_decode($this->secret), true);
