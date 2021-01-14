@@ -1,4 +1,7 @@
 <?php
+// Questo controller viene invocato nella finestra di dettaglio delle Transazioni
+// del Token, quando è nello stato "in corso..."
+
 Yii::import('libs.crypt.crypt');
 Yii::import('libs.NaPacks.Settings');
 Yii::import('libs.NaPacks.WebApp');

@@ -7,6 +7,7 @@
  * @property integer $id_request
  * @property integer $id_merchant
  * @property string $payload
+ * @property integer $sent
  */
 class RuleEngineRequests extends CActiveRecord
 {
@@ -26,11 +27,11 @@ class RuleEngineRequests extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_merchant, payload', 'required'),
-			array('id_merchant', 'numerical', 'integerOnly'=>true),
+			array('id_merchant, payload, sent', 'required'),
+			array('id_merchant, sent', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_request, id_merchant, payload', 'safe', 'on'=>'search'),
+			array('id_request, id_merchant, payload, sent', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,6 +55,7 @@ class RuleEngineRequests extends CActiveRecord
 			'id_request' => 'Id Request',
 			'id_merchant' => 'Id Merchant',
 			'payload' => 'Payload',
+			'sent' => 'Sent',
 		);
 	}
 
@@ -78,6 +80,7 @@ class RuleEngineRequests extends CActiveRecord
 		$criteria->compare('id_request',$this->id_request);
 		$criteria->compare('id_merchant',$this->id_merchant);
 		$criteria->compare('payload',$this->payload,true);
+		$criteria->compare('sent',$this->sent,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
