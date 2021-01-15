@@ -74,14 +74,14 @@ class PluginController extends Controller
 
 		$raw_post_data = file_get_contents('php://input');
 		if (false === $raw_post_data) {
-      $save->WriteLog('dashboard','plugin','send','Error. Could not read from the php://input stream or invalid IPN received.',true);
+      $save->WriteLog('dashboard','plugin','send','Could not read from the php://input stream or invalid IPN received.',true);
 		}else{
       if (!PRODUCTION)
         $save->WriteLog('dashboard','plugin','save','php://input stream is valid.');
 		}
 
 		if (false === $_POST) {
-      $save->WriteLog('dashboard','plugin','save','Error. Could not read from the $_POST stream or invalid IPN received.',true);
+      $save->WriteLog('dashboard','plugin','save','Could not read from the $_POST stream or invalid IPN received.',true);
 		}else{
       if (!PRODUCTION)
         $save->WriteLog('dashboard','plugin','save','$_POST stream is valid.');
@@ -95,7 +95,7 @@ class PluginController extends Controller
     //  exit;
     // VERIFICO CHE NEL POST CI SIA L'EVENT
     if (!isset($_POST['event'])) {
-      $save->WriteLog('dashboard','plugin','save','Error. $_POST event isn\'t valid.',true);
+      $save->WriteLog('dashboard','plugin','save','$_POST event is not valid.',true);
 		}else{
       if (!PRODUCTION)
         $save->WriteLog('dashboard','plugin','save','$_POST event is valid.');
@@ -106,17 +106,18 @@ class PluginController extends Controller
     $ipn = (object) APIKeys::check();
 
 		if (true === empty($ipn)) {
-      $save->WriteLog('dashboard','plugin','save','Error. Could not decode the JSON payload from Server.',true);
+      $save->WriteLog('dashboard','plugin','save','Could not decode the JSON payload from Server.',true);
 		}else{
       if (!PRODUCTION)
         $save->WriteLog('dashboard','plugin','save','Json payload and api keys are valid.');
 		}
 
     $payload = (object) $ipn->event;
-    // $save->WriteLog('dashboard','plugin','save','Payload is: <pre>'.print_r($payload,true).'</pre>');
+    if (!PRODUCTION)
+      $save->WriteLog('dashboard','plugin','save','Payload is: <pre>'.print_r($payload,true).'</pre>');
 
 		if (true === empty($payload->id)) {
-      $save->WriteLog('dashboard','plugin','save','Error. Invalid Server payment notification message received - did not receive invoice ID.',true);
+      $save->WriteLog('dashboard','plugin','save','Invalid Server payment notification message received - did not receive invoice ID.',true);
 		}else{
       if (!PRODUCTION)
         $save->WriteLog('dashboard','plugin','save','Ipn id is valid.');
@@ -125,12 +126,12 @@ class PluginController extends Controller
     // CARICO le impostazioni
     $settings=Settings::load();
 		if($settings===null)
-      $save->WriteLog('dashboard','plugin','save','Error. The requested Settings does not exist.',true);
+      $save->WriteLog('dashboard','plugin','save','The requested Settings does not exist.',true);
 
     // Load client data
     $client = WalletsBolt::model()->findByAttributes(['id_user'=>$payload->customer_id]);
     if($client===null)
-      $save->WriteLog('dashboard','plugin','save','Error. The requested Client Wallet does not exist.',true);
+      $save->WriteLog('dashboard','plugin','save','The requested Client Wallet does not exist.',true);
 
     if (!PRODUCTION)
       $save->WriteLog('dashboard','plugin','save','Client wallet address is: '.$client->wallet_address);
