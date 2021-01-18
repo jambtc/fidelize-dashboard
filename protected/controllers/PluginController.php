@@ -169,7 +169,7 @@ class PluginController extends Controller
     // ALTER TABLE `re_requests` MODIFY `id_request` int(11) NOT NULL AUTO_INCREMENT;
     // ALTER TABLE `re_requests` ADD `sent` INT(1) NOT NULL AFTER `payload`;
     //
-    // AGGIUNGI IL CAMPO timestamp
+    // -- AGGIUNGI IL CAMPO timestamp
     // ALTER TABLE `re_requests` ADD `timestamp` INT(11) NOT NULL AFTER `id_request`;
 
     $model = new RuleEngineRequests;
