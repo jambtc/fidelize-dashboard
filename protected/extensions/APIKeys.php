@@ -42,7 +42,8 @@ class APIKeys
     $microtime = explode(' ', microtime());
     $nonce = $microtime[1] . str_pad(substr($microtime[0], 2, 6), 6, '0');
     if (($nonce/1000000 - $event->nonce/1000000) > NONCE_STEP){
-      $save->WriteLog('dashboard','ipn','APIKeys','Data is outdated! '.$nonce/1000000.' - '.$event->nonce/1000000);
+      $message = "Data is outdated! ".round($nonce/1000000)." - ".round($event->nonce/1000000). " = ". round($nonce/1000000 - $event->nonce/1000000) . " > ".NONCE_STEP;
+      $save->WriteLog('dashboard','ipn','APIKeys',$message);
       die (json_encode(['success'=>false,'message'=>'Data is outdated!']));
     }
 

@@ -13,7 +13,6 @@ chown -R www-data:www-data uploads/
 chown -R www-data:www-data custom/
 chown -R www-data:www-data protected/runtime/
 chown -R www-data:www-data protected/log/
-chown -R www-data:www-data protected/privatekeys/
 
 chmod 755 protected/yiic
 chmod 755 update.sh
