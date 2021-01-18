@@ -168,8 +168,12 @@ class PluginController extends Controller
     // -- AUTO_INCREMENT per la tabella `re_requests`
     // ALTER TABLE `re_requests` MODIFY `id_request` int(11) NOT NULL AUTO_INCREMENT;
     // ALTER TABLE `re_requests` ADD `sent` INT(1) NOT NULL AFTER `payload`;
+    //
+    // AGGIUNGI IL CAMPO timestamp
+    // ALTER TABLE `re_requests` ADD `timestamp` INT(11) NOT NULL AFTER `id_request`;
 
     $model = new RuleEngineRequests;
+    $model->timestamp = time();
     $model->id_merchant = $payload->merchant_id;
     $model->payload = json_encode($ipn);
     $model->sent = 0; // NON INVIATO
@@ -177,7 +181,25 @@ class PluginController extends Controller
 
     //eseguo lo script che si occuperà in background di verificare lo stato dell'evento appena creata...
     $cmd = Yii::app()->basePath.DIRECTORY_SEPARATOR.'yiic request --id='.crypt::Encrypt($model->id_request);
-    Utils::execInBackground($cmd);
+    $ssh = Utils::execInBackground($cmd);
+    if (is_array($ssh) && isset($ssh['error'])){
+      $save->WriteLog('dashboard','plugin','save','SSH response is: '.$ssh['error']);
+
+      //INVIO UN MESSAGGIO DI NOTIFICA
+      $notification = array(
+        'type_notification' => 'plugin',
+        'id_user' => $payload->merchant_id,
+        'id_tocheck' => $model->id_request,
+        'status' => 0,
+        'description' => Yii::t('notify','An error occurred!: '.$ssh['error']),
+         // La URL deve comprendere l'hostname in quanto deve essere raggiungibileSOLO DALLA DASHBOARD
+        'url' => 'index.php?r=rulesengine/view&id='.crypt::Encrypt($model->id_request),
+        'timestamp' => time(),
+        'price' => 0,
+        'deleted' => 0,
+        );
+      Push::Send($save->Notification($notification,true),'plugin');
+    }
 
     // Now, we can exit and respond with HTTP 200
     $json = array(
@@ -194,7 +216,7 @@ class PluginController extends Controller
     header('Content-type:application/json;charset=utf-8');
     echo CJSON::encode($json);
 
-    $save->WriteLog('dashboard','plugin','save','Plugin log end.');
+    $save->WriteLog('dashboard','plugin','save','Plugin log for id '.crypt::Encrypt($model->id_request).' completed.');
 
 	}
 

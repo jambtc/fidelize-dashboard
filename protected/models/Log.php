@@ -105,7 +105,16 @@ class Log extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>array(
+					'id_log'=>true,
+				)
+			),
+			'pagination' => array(
+			  'pageSize' => 30,
+		  	),
 		));
+
 	}
 
 	/**

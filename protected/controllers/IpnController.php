@@ -17,7 +17,8 @@ class IpnController extends Controller
 {
   public function init()
 	{
-
+    // change this constant to true in PRODUCTION
+    define('PRODUCTION',false);
   }
 
 	/**

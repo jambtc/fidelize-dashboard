@@ -73,7 +73,7 @@ class RequestCommand extends CConsoleCommand
 		$try = 1;
 		$MAXtry = 32768; // quasi 1 giorno di monitoraggio
 
-		$this->log("Checking request #: $id");
+		$this->log("Checking request $id");
 
 		//carico la richiesta
 		$request = $this->loadRequest(crypt::Decrypt($id));
@@ -103,7 +103,7 @@ class RequestCommand extends CConsoleCommand
 				if (is_array($analisi)){
 					if (!isset($analisi['errors'])){
 						if ($analisi['event']['group']['total_items'][0] == 'ok'){
-							$this->log('Payload sent!');
+							$this->log('Payload sent correctly!');
 							// imposto il sent to true
 							$request->sent = 1;
 							$request->save();
@@ -115,7 +115,11 @@ class RequestCommand extends CConsoleCommand
 							break;
 						}
 					}else{
-						$this->log($analisi['errors']['detail']);
+						$this->log('Payload sent, but there was an error:'. $analisi['errors']['detail']);
+						// imposto il sent to true
+						$request->sent = 1;
+						$request->save();
+						break;
 					}
 				}else{
 					$this->log('Payload not sent! Retry again.');
@@ -124,10 +128,10 @@ class RequestCommand extends CConsoleCommand
 				$this->log('Payload already sent!');
 				break;
 			}else{
-				$this->log('Payload already sent, but there was an error!');
+				$this->log('Payload already sent, but there was an unknown error!');
 				break;
 			}
-			$this->log("Invoice: $id, Status: ".$request->sent.", Waiting seconds: ".$try."\n");
+			$this->log("Request id: $id, Status: ".$request->sent.", Waiting seconds: ".$try."\n");
 			sleep($try);
 			$try = $try*2;
 

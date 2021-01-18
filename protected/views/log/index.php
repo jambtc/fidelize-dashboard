@@ -6,13 +6,15 @@
 					<div class="card-header ">
 						<i class="fas fa-list-alt"></i>
 						<span class="card-title">Log</span>
-
 					</div>
 					<div class="card-body">
 						<div class="table-responsive table--no-card m-b-40">
 							<?php $this->widget('zii.widgets.grid.CGridView', array(
 								//'htmlOptions' => array('class' => 'table table-wallet'),
-							    'dataProvider'=>$dataProvider,
+								'dataProvider'=>$modelc->search(),
+								'id'=>'log-grid',
+								'filter'=>$modelc,
+
 								'columns' => array(
 									array(
             				'name'=>'timestamp',
@@ -20,34 +22,34 @@
 										'value' => 'CHtml::link(WebApp::dateLN($data->timestamp), Yii::app()->createUrl("log/view",["id"=>$data->id_log]) )',
                   ),
 									array(
-            				            'name'=>'id_user',
-            							'type' => 'raw',
-                                        'value' => '$data->id_user',
-                                    ),
+            				'name'=>'id_user',
+            				'type' => 'raw',
+                    'value' => '$data->id_user',
+                  ),
 									array(
-            				            'name'=>'app',
-            							'type' => 'raw',
-                                        'value' => '$data->app',
-                                    ),
+            			  'name'=>'app',
+            				'type' => 'raw',
+                    'value' => '$data->app',
+                  ),
 									array(
-            				            'name'=>'controller',
-            							'type' => 'raw',
-                                        'value' => '$data->controller',
-                                    ),
+            			  'name'=>'controller',
+            				'type' => 'raw',
+                    'value' => '$data->controller',
+                  ),
 									array(
-            				            'name'=>'action',
-            							'type' => 'raw',
-                                        'value' => '$data->action',
-                                    ),
+            			  'name'=>'action',
+            				'type' => 'raw',
+                    'value' => '$data->action',
+                  ),
 									array(
-            				            'name'=>'description',
-            							'type' => 'raw',
-                                        'value' => '$data->description',
-                                    ),
+            			  'name'=>'description',
+            				'type' => 'raw',
+                    'value' => '$data->description',
+                  ),
 									array(
-            				            'name'=>'die',
-                                        'value' => '$data->die',
-                                    ),
+            			  'name'=>'die',
+                    'value' => '$data->die',
+                  ),
 
 
 
