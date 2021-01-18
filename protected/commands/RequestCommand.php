@@ -89,7 +89,7 @@ class RequestCommand extends CConsoleCommand
 
 				// Send the new Payload to Rules Engine Server
 				Yii::import('ext.backendAPI.Backend');
-				Yii::import('ext.backendAPI.BackendAPI');
+				
 				$api = new Backend($settings->RulesEngineApiKeyPublic,$settings->RulesEngineApiKeySecret);
 				$api->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
 
