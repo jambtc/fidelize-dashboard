@@ -62,16 +62,26 @@ class LogController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Log', array(
-			'sort'=>array(
-	    		'defaultOrder'=>array(
-	      			'id_log'=>true
-	    		)
-	  		),
-			'pagination'=>array('pageSize'=>30)
-		));
+		// $dataProvider=new CActiveDataProvider('Log', array(
+		// 	'sort'=>array(
+	  //   		'defaultOrder'=>array(
+	  //     			'id_log'=>true
+	  //   		)
+	  // 		),
+		// 	'pagination'=>array('pageSize'=>30)
+		// ));
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
+
+		$modelc=new Log('search');
+		$modelc->unsetAttributes();
+
+		if(isset($_GET['Log']))
+			$modelc->attributes=$_GET['Log'];
+
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'modelc'=>$modelc,
 		));
 	}
 

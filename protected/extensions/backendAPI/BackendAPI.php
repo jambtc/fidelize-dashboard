@@ -98,13 +98,10 @@ class BackendAPI
   */
   function QueryPrivate($path, array $request = array())
   {
-
-// $save = new Save;
-// $save->WriteLog('dashboard','backendAPI','queryprivate','Request array to Rules Engine Server is: <pre>'.print_r($request,true).'</pre>');
-// echo '<pre>'.print_r($request,true).'</pre>';
-// exit;
-
-
+  // $save = new Save;
+  // $save->WriteLog('dashboard','backendAPI','queryprivate','Request array to Rules Engine Server is: <pre>'.print_r($request,true).'</pre>');
+  // echo '<pre>'.print_r($request,true).'</pre>';
+  // exit;
     // build the POST data string
     $postdata = http_build_query($request, '', '&');
 
