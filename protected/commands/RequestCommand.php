@@ -88,13 +88,20 @@ class RequestCommand extends CConsoleCommand
 		      $this->log('Error. The requested Settings page does not exist.',true);
 
 				// Send the new Payload to Rules Engine Server
-				Yii::import('ext.backendAPI.Backend');
-				
-				$api = new Backend($settings->RulesEngineApiKeyPublic,$settings->RulesEngineApiKeySecret);
-				$api->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
+				// - import class
+				Yii::import('ext.rulesEngine.RulesEngineApi');
 
+				// set the api keys to send in the header
+				$REA = new RulesEngineApi($settings->RulesEngineApiKeyPublic,$settings->RulesEngineApiKeySecret);
+
+				// set the Rules Engine URL
+				$REA->setRulesEngineUrl($settings->RulesEngineApiKeyURL);
+
+				// transform payload in json format
 				$payload = (array) json_decode($request->payload);
-				$result = $api->send($payload);
+
+				// Send request to Rules Engine
+				$result = $REA->send($payload);
 				$this->log("Response of server is: ".$result);
 
 				$analisi = CJSON::decode($result);

@@ -3,9 +3,9 @@
  * Reference implementation for Backend Engine's REST API.
  */
 
-class BackendAPIException  extends ErrorException {};
+class RulesEngineQueryException  extends ErrorException {};
 
-class BackendAPI
+class RulesEngineQuery
 {
   protected $key;     // API key
   protected $secret;  // API secret
@@ -139,7 +139,7 @@ class BackendAPI
     curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
     $result = curl_exec($this->curl);
     if($result===false)
-      throw new BackendAPIException ('CURL error: ' . curl_error($this->curl));
+      throw new RulesEngineQueryException ('CURL error: ' . curl_error($this->curl));
 
 
     return $result;

@@ -7,9 +7,9 @@
  * @throws \Exception
 */
 
-require_once ('BackendAPI.php');
+require_once ('RulesEngineQuery.php');
 
-class Backend extends BackendAPI
+class RulesEngineApi extends RulesEngineQuery
 {
   public function send($ipn)
   {

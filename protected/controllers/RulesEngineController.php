@@ -14,7 +14,7 @@ use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
 
-class PluginController extends Controller
+class RulesEngineController extends Controller
 {
   public function init()
 	{
@@ -49,7 +49,7 @@ class PluginController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array(
-          'saverequest', // receive POST from shopping-cart plugin and SAVE it
+          'saveRequest', // receive POST from shopping-cart plugin and SAVE it
         ),
 				'users'=>array('*'),
 			),
@@ -64,35 +64,23 @@ class PluginController extends Controller
 	 * receive POST from shopping-cart plugin and SAVE it
 	 * @param POST
 	 */
-	public function actionSaverequest()
+	public function actionSaveRequest()
 	{
     $save = new Save;
-    $save->WriteLog('dashboard','plugin','save','Start Plugin log.');
+    if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','Start Plugin log.');
 
 		// Questa opzione abilita i wrapper URL per fopen (file_get_contents), in modo da potere accedere ad oggetti URL come file
 		ini_set("allow_url_fopen", true);
 
 		$raw_post_data = file_get_contents('php://input');
-		if (false === $raw_post_data) {
-      $save->WriteLog('dashboard','plugin','send','Could not read from the php://input stream or invalid IPN received.',true);
-		}else{
-      if (!PRODUCTION)
-        $save->WriteLog('dashboard','plugin','save','php://input stream is valid.');
-		}
+		if (false === $raw_post_data) $save->WriteLog('dashboard','plugin','send','Could not read from the php://input stream or invalid IPN received.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','php://input stream is valid.');
 
-		if (false === $_POST) {
-      $save->WriteLog('dashboard','plugin','save','Could not read from the $_POST stream or invalid IPN received.',true);
-		}else{
-      if (!PRODUCTION)
-        $save->WriteLog('dashboard','plugin','save','$_POST stream is valid.');
-		}
-    if (!PRODUCTION)
-      $save->WriteLog('dashboard','plugin','save','Received _POST is:<pre>'.print_r($_POST,true).'</pre>');
+		if (false === $_POST) $save->WriteLog('dashboard','plugin','save','Could not read from the $_POST stream or invalid IPN received.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','$_POST stream is valid.');
 
+    if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','Received _POST is:<pre>'.print_r($_POST,true).'</pre>');
 
-    //  echo 'a<pre>'.print_r($_POST,true).'</pre>';
-    // // // echo '<pre>'.print_r($raw_post_data,true).'</pre>';
-    //  exit;
     // VERIFICO CHE NEL POST CI SIA L'EVENT
     if (!isset($_POST['event'])) {
       $save->WriteLog('dashboard','plugin','save','$_POST event is not valid.',true);
@@ -216,7 +204,7 @@ class PluginController extends Controller
     header('Content-type:application/json;charset=utf-8');
     echo CJSON::encode($json);
 
-    $save->WriteLog('dashboard','plugin','save','Plugin log for id '.crypt::Encrypt($model->id_request).' completed.');
+    $save->WriteLog('dashboard','plugin','save','Request id <b>'.crypt::Encrypt($model->id_request).'</b> from shopping cart id <b>'.$payload->id.'</b> saved.');
 
 	}
 
