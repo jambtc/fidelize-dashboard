@@ -56,7 +56,7 @@ class APIKeys
     foreach ($headers as $name => $value) {
       if (strtoupper($name) == 'API-KEY'){
         // Load the Api keys from table to check existence
-        $model = Api::model()->findByAttributes(['key_public'=>$value]);
+        $model = ApiConnections::model()->findByAttributes(['key_public'=>$value]);
         if (null === $model){
           $save->WriteLog('dashboard','ipn','APIKeys','Public key doesn\'t exist!');
           die (json_encode(['success'=>false,'message'=>'Public key doesn\'t exist!']));

@@ -9,10 +9,8 @@ Yii::import('libs.NaPacks.Save');
 Yii::import('libs.NaPacks.WebApp');
 Yii::import('libs.Utils.Utils');
 
-
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
-
 
 class RulesEngineController extends Controller
 {
