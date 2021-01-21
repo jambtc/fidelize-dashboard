@@ -15,7 +15,6 @@ $myScript = <<<JS
   }
 
 
-
 	var api = {
 		get: function(func){
 			$.ajax({
@@ -25,8 +24,8 @@ $myScript = <<<JS
 				complete: function (json) {
 					js = json.responseJSON;
 
-					$('#Api_key_public').val(js.public);
-          $('#Api_key_secret').val(js.secret);
+					$('#ApiConnections_key_public').val(js.public);
+          $('#ApiConnections_key_secret').val(js.secret);
           $('#onechance').show();
 				}
 			});

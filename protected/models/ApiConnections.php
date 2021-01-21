@@ -13,7 +13,7 @@
  * The followings are the available model relations:
  * @property Users $idUser
  */
-class Api extends CActiveRecord
+class ApiConnections extends CActiveRecord
 {
     /**
      * @return string the associated database table name
@@ -100,7 +100,7 @@ class Api extends CActiveRecord
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
      * @param string $className active record class name.
-     * @return Api the static model class
+     * @return ApiConnections the static model class
      */
     public static function model($className=__CLASS__)
     {

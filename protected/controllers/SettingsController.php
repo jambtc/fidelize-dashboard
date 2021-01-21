@@ -98,7 +98,7 @@ class SettingsController extends Controller
 	{
 		echo CJSON::encode([
 			'public'=>Utils::passwordGenerator(24),
-			'secret'=>Utils::passwordGenerator(64,true)
+			'secret'=>Utils::passwordGenerator(64)
 		]);
 	}
 

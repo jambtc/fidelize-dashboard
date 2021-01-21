@@ -2,7 +2,7 @@
 Yii::import('libs.crypt.crypt');
 Yii::import('libs.NaPacks.Logo');
 
-class ApiController extends Controller
+class ApiConnectionsController extends Controller
 {
 	public function init()
 	{
@@ -53,14 +53,14 @@ class ApiController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Api;
+		$model=new ApiConnections;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Api']))
+		if(isset($_POST['ApiConnections']))
 		{
-			$model->attributes=$_POST['Api'];
+			$model->attributes=$_POST['ApiConnections'];
 			$model->key_secret = md5($model->key_public.$model->key_secret);
 			#echo "<pre>".print_r($_POST,true)."</pre>";
 			#exit;
@@ -85,9 +85,9 @@ class ApiController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Api']))
+		if(isset($_POST['ApiConnections']))
 		{
-			$model->attributes=$_POST['Api'];
+			$model->attributes=$_POST['ApiConnections'];
 			if($model->save())
 				$this->redirect(array('index'));
 		}
@@ -116,37 +116,22 @@ class ApiController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Api');
+		$dataProvider=new CActiveDataProvider('ApiConnections');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
 	}
 
 	/**
-	 * Manages all models.
-	 */
-	// public function actionAdmin()
-	// {
-	// 	$model=new Api('search');
-	// 	$model->unsetAttributes();  // clear any default values
-	// 	if(isset($_GET['Api']))
-	// 		$model->attributes=$_GET['Api'];
-	//
-	// 	$this->render('admin',array(
-	// 		'model'=>$model,
-	// 	));
-	// }
-
-	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Api the loaded model
+	 * @return ApiConnections the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Api::model()->findByPk($id);
+		$model=ApiConnections::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -154,11 +139,11 @@ class ApiController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Api $model the model to be validated
+	 * @param ApiConnections $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='api-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='apiconnections-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
