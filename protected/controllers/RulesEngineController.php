@@ -67,76 +67,57 @@ class RulesEngineController extends Controller
 	public function actionSaveRequest()
 	{
     $save = new Save;
-    if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','Start Plugin log.');
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Start Plugin log.');
 
 		// Questa opzione abilita i wrapper URL per fopen (file_get_contents), in modo da potere accedere ad oggetti URL come file
 		ini_set("allow_url_fopen", true);
 
 		$raw_post_data = file_get_contents('php://input');
-		if (false === $raw_post_data) $save->WriteLog('dashboard','plugin','send','Could not read from the php://input stream or invalid IPN received.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','php://input stream is valid.');
+		if (false === $raw_post_data) $save->WriteLog('dashboard','RulesEngine','send','Could not read from the php://input stream or invalid IPN received.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','php://input stream is valid.');
 
-		if (false === $_POST) $save->WriteLog('dashboard','plugin','save','Could not read from the $_POST stream or invalid IPN received.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','$_POST stream is valid.');
+		if (false === $_POST) $save->WriteLog('dashboard','RulesEngine','save','Could not read from the $_POST stream or invalid IPN received.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST stream is valid.');
 
-    if (!PRODUCTION) $save->WriteLog('dashboard','plugin','save','Received _POST is:<pre>'.print_r($_POST,true).'</pre>');
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Received _POST is:<pre>'.print_r($_POST,true).'</pre>');
 
     // VERIFICO CHE NEL POST CI SIA L'EVENT
-    if (!isset($_POST['event'])) {
-      $save->WriteLog('dashboard','plugin','save','$_POST event is not valid.',true);
-		}else{
-      if (!PRODUCTION)
-        $save->WriteLog('dashboard','plugin','save','$_POST event is valid.');
-		}
+    if (!isset($_POST['event'])) $save->WriteLog('dashboard','RulesEngine','save','$_POST event is not valid.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST event is valid.');
 
     // VERIFICO CHE I DATI INVIATI SIANO CORRETTI
     Yii::import('ext.APIKeys');
     $ipn = (object) APIKeys::check();
 
-		if (true === empty($ipn)) {
-      $save->WriteLog('dashboard','plugin','save','Could not decode the JSON payload from Server.',true);
-		}else{
-      if (!PRODUCTION)
-        $save->WriteLog('dashboard','plugin','save','Json payload and api keys are valid.');
-		}
+		if (true === empty($ipn)) $save->WriteLog('dashboard','RulesEngine','save','Could not decode the JSON payload from Server.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Json payload and api keys are valid.');
 
     $payload = (object) $ipn->event;
-    if (!PRODUCTION)
-      $save->WriteLog('dashboard','plugin','save','Payload is: <pre>'.print_r($payload,true).'</pre>');
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Payload is: <pre>'.print_r($payload,true).'</pre>');
 
-		if (true === empty($payload->id)) {
-      $save->WriteLog('dashboard','plugin','save','Invalid Server payment notification message received - did not receive invoice ID.',true);
-		}else{
-      if (!PRODUCTION)
-        $save->WriteLog('dashboard','plugin','save','Ipn id is valid.');
-		}
+		if (true === empty($payload->id)) $save->WriteLog('dashboard','RulesEngine','save','Invalid Server payment notification message received - did not receive invoice ID.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Ipn id is valid.');
 
     // CARICO le impostazioni
     $settings=Settings::load();
-		if($settings===null)
-      $save->WriteLog('dashboard','plugin','save','The requested Settings does not exist.',true);
+		if($settings===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Settings does not exist.',true);
 
     // Load client data
     $client = WalletsBolt::model()->findByAttributes(['id_user'=>$payload->customer_id]);
-    if($client===null)
-      $save->WriteLog('dashboard','plugin','save','The requested Client Wallet does not exist.',true);
+    if($client===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Client Wallet does not exist.',true);
 
-    if (!PRODUCTION)
-      $save->WriteLog('dashboard','plugin','save','Client wallet address is: '.$client->wallet_address);
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Client wallet address is: '.$client->wallet_address);
 
     // aggiungo il wallet address
     $payload->client_address = $client->wallet_address;
     $identifier = explode(":",$payload->id);
 
-    if (!(isset($identifier[1])))
-      $payload->cart_id = $payload->id;
-    else
-      $payload->cart_id = $identifier[1];
+    if (!(isset($identifier[1]))) $payload->cart_id = $payload->id;
+    else $payload->cart_id = $identifier[1];
 
     // generate the new payload
     $ipn->event = $payload;
-    if (!PRODUCTION)
-      $save->WriteLog('dashboard','plugin','save','New Payload to Rules Engine Server is: <pre>'.print_r($ipn,true).'</pre>');
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','New Payload to Rules Engine Server is: <pre>'.print_r($ipn,true).'</pre>');
 
     // SAVE THE PAYLOAD
     // save in a new table
@@ -170,23 +151,24 @@ class RulesEngineController extends Controller
     //eseguo lo script che si occuperà in background di verificare lo stato dell'evento appena creata...
     $cmd = Yii::app()->basePath.DIRECTORY_SEPARATOR.'yiic request --id='.crypt::Encrypt($model->id_request);
     $ssh = Utils::execInBackground($cmd);
+
+    // if there is an error...
     if (is_array($ssh) && isset($ssh['error'])){
-      $save->WriteLog('dashboard','plugin','save','SSH response is: '.$ssh['error']);
+      $save->WriteLog('dashboard','RulesEngine','save','SSH response is: '.$ssh['error']);
 
       //INVIO UN MESSAGGIO DI NOTIFICA
       $notification = array(
-        'type_notification' => 'plugin',
+        'type_notification' => 'RulesEngine',
         'id_user' => $payload->merchant_id,
         'id_tocheck' => $model->id_request,
         'status' => 0,
         'description' => Yii::t('notify','An error occurred!: '.$ssh['error']),
-         // La URL deve comprendere l'hostname in quanto deve essere raggiungibileSOLO DALLA DASHBOARD
-        'url' => 'index.php?r=rulesengine/view&id='.crypt::Encrypt($model->id_request),
+        'url' => Yii::app()->createUrl('rulesenginerequests/view',array('id'=>crypt::Encrypt($model->id_request)))
         'timestamp' => time(),
         'price' => 0,
         'deleted' => 0,
-        );
-      Push::Send($save->Notification($notification,true),'plugin');
+      );
+      Push::Send($save->Notification($notification,true),'RulesEngine');
     }
 
     // Now, we can exit and respond with HTTP 200
@@ -197,15 +179,13 @@ class RulesEngineController extends Controller
       'payload'=>$model->payload, // ovviamente questo può essere tolto. Serve solo a dimostrare che il plugin riceve il payuload giusto.
     );
 
-    if (!PRODUCTION)
-      $save->WriteLog('dashboard','plugin','save','json response is: <pre>'.print_r($json,true).'</pre>');
+    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','json response is: <pre>'.print_r($json,true).'</pre>');
 
     // Rispondi con il json
     header('Content-type:application/json;charset=utf-8');
     echo CJSON::encode($json);
 
-    $save->WriteLog('dashboard','plugin','save','Request id <b>'.crypt::Encrypt($model->id_request).'</b> from shopping cart id <b>'.$payload->id.'</b> saved.');
-
+    $save->WriteLog('dashboard','RulesEngine','save','Request id <b>'.crypt::Encrypt($model->id_request).'</b> from shopping cart id <b>'.$payload->id.'</b> saved.');
 	}
 
 

@@ -32,13 +32,13 @@ $actionURL = Yii::app()->createUrl('pos/create');
 							    'dataProvider'=>$dataProvider,
 								'columns' => array(
 									array(
-							            'name'=>'id_merchant',
+							      'name'=>'id_merchant',
 										'value'=> '(Merchants::model()->findByPk($data->id_merchant) === null)
 														? null : isset(Merchants::model()->findByPk($data->id_merchant)->denomination)
 														? CHtml::link(CHtml::encode(Merchants::model()->findByPk($data->id_merchant)->denomination), Yii::app()->createUrl("pos/view")."&id=".CHtml::encode(crypt::Encrypt($data->id_pos))) : ""',
 										'visible' => $visible,
 										'type'=>'raw',
-							        ),
+							    ),
 									array(
 							            'name'=>'id_store',
 										'value'=>'isset(Stores::model()->findByPk($data->id_store)->denomination)

@@ -76,6 +76,9 @@
 							<li style='display: <?php echo $visible[20]; ?>;'>
 								<a href="<?php echo Yii::app()->createUrl('log/index');?>">Log<i class="fa fa-list-alt"></i></a>
 							</li>
+							<li style='display: <?php echo $visible[20]; ?>;'>
+								<a href="<?php echo Yii::app()->createUrl('rulesenginerequests/index');?>">RE Requests<i class="fa fa-cogs"></i></a>
+							</li>
 						<?php } ?>
 						<li style='display: <?php echo $visible[10]; ?>;'>
 							<a href="<?php echo Yii::app()->createUrl('apiconnections/index');?>"><i class="fas fa-chain"></i>API Keys</a>
