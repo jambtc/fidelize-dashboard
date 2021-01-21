@@ -107,10 +107,10 @@ class ApiController extends Controller
 
     if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','Received php://input stream is:<pre>'.print_r($raw_post_data,true).'</pre>');
 
-		// if (false === $_POST) $save->WriteLog('dashboard','API','Index','Could not read from the $_POST stream or invalid IPN received.',true);
-		// else if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','$_POST stream is valid.');
-    //
-    // if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','Received $_POST is:<pre>'.print_r($_POST,true).'</pre>');
+		if (false === $_POST) $save->WriteLog('dashboard','API','Index','Could not read from the $_POST stream or invalid IPN received.',true);
+		else if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','$_POST stream is valid.');
+
+    if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','Received $_POST is:<pre>'.print_r($_POST,true).'</pre>');
 
     $json = CJSON::decode($raw_post_data);
     if (!PRODUCTION) $save->WriteLog('dashboard','API','Index','json is:<pre>'.print_r($json,true).'</pre>');
@@ -123,9 +123,14 @@ class ApiController extends Controller
         $save->WriteLog('dashboard','API','Index','$json event is valid.');
 		}
 
+    $_POST = $json;
+
     // VERIFICO CHE I DATI INVIATI SIANO CORRETTI
-    Yii::import('ext.APIKeys');
-    $ipn = (object) APIKeys::check();
+    // nella fase di test non controllo l'api key e la signed key nell'header 
+    // Yii::import('ext.APIKeys');
+    // $ipn = (object) APIKeys::check();
+
+    $ipn = (object) $json;
 
 		if (true === empty($ipn)) {
       $save->WriteLog('dashboard','API','Index','Could not decode the JSON payload from Server.',true);
@@ -159,8 +164,8 @@ class ApiController extends Controller
     $response = [
       'payload'=>$_POST,
       'headers'=>getallheaders(),
-      'success'=>$success,
-      'message'=>$message,
+      'success'=>1,
+      'message'=>'test-ok-no-action-to-do',
     ];
 
 
