@@ -2,7 +2,7 @@
 Yii::import('libs.crypt.crypt');
 Yii::import('libs.NaPacks.Logo');
 
-class ApiConnectionsController extends Controller
+class ApiconnectionsController extends Controller
 {
 	public function init()
 	{

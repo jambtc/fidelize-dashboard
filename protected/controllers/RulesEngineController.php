@@ -163,7 +163,7 @@ class RulesEngineController extends Controller
         'id_tocheck' => $model->id_request,
         'status' => 0,
         'description' => Yii::t('notify','An error occurred!: '.$ssh['error']),
-        'url' => Yii::app()->createUrl('rulesenginerequests/view',array('id'=>crypt::Encrypt($model->id_request)))
+        'url' => Yii::app()->createUrl('rulesenginerequests/view',array('id'=>crypt::Encrypt($model->id_request))),
         'timestamp' => time(),
         'price' => 0,
         'deleted' => 0,

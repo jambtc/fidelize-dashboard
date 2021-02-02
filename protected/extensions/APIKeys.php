@@ -9,7 +9,7 @@ class APIKeys
    *
    * @param array $request is the POST message
   */
-  public function check()
+  public function check($post = null)
   {
     $save = new Save;
 
@@ -24,12 +24,14 @@ class APIKeys
         return $headers;
       }
     }
-
     // echo '<pre>apikeys'.print_r($_POST,true).'</pre>';
     // exit;
 
-    // $post = json_decode($_POST['data']);
-    $event = (object) $_POST['event'];
+    if (null === $post)
+      $event = (object) $_POST['event'];
+    else
+      $event = (object) $post['event'];
+
     $headers = getallheaders();
 
     // check if isset nonce
@@ -56,7 +58,7 @@ class APIKeys
     foreach ($headers as $name => $value) {
       if (strtoupper($name) == 'API-KEY'){
         // Load the Api keys from table to check existence
-        $model = Api::model()->findByAttributes(['key_public'=>$value]);
+        $model = ApiConnections::model()->findByAttributes(['key_public'=>$value]);
         if (null === $model){
           $save->WriteLog('dashboard','ipn','APIKeys','Public key doesn\'t exist!');
           die (json_encode(['success'=>false,'message'=>'Public key doesn\'t exist!']));

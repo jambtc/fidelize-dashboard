@@ -4,7 +4,7 @@ Yii::import('libs.NaPacks.Logo');
 Yii::import('libs.NaPacks.WebApp');
 
 
-class RulesEngineRequestsController extends Controller
+class RulesenginerequestsController extends Controller
 {
 	public function init()
 	{
