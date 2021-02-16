@@ -78,7 +78,7 @@
 								</li>
 							<?php } ?>
 							<li style='display: <?php echo $visible[10]; ?>;'>
-								<a href="<?php echo Yii::app()->createUrl('apiconnections/index');?>"><i class="fas fa-chain"></i>API Keys</a>
+								<a href="<?php echo Yii::app()->createUrl('apiConnections/index');?>"><i class="fas fa-chain"></i>API Keys</a>
 							</li>
 						</ul>
 					</li>
