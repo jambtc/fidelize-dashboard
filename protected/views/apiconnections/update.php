@@ -1,6 +1,6 @@
 <?php
 $viewName = 'API';
-$apiDelete = Yii::app()->createUrl('apiconnections/delete',array('id'=>crypt::encrypt($model->id_api)));
+$apiDelete = Yii::app()->createUrl('apiConnections/delete',array('id'=>crypt::encrypt($model->id_api)));
 ?>
 <div class='section__content section__content--p30'>
 	<div class='container-fluid'>

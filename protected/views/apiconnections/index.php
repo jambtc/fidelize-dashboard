@@ -7,7 +7,7 @@
 						<i class="fas fa-code-branch"></i>
 						<span class="card-title">Lista Chiavi API</span>
 						<div class="float-right">
-							<?php $actionURL = Yii::app()->createUrl('apiconnections/create'); ?>
+							<?php $actionURL = Yii::app()->createUrl('apiConnections/create'); ?>
 							<a href="<?php echo $actionURL;?>">
 								<button class="btn alert-primary text-light img-cir" style="padding:2.5px; width:30px; height:30px;">
 									<i class="fa fa-plus"></i></button>
@@ -25,13 +25,13 @@
 							      'name'=>'key_description',
 										'header'=>'key_description',
 										'type'=>'raw',
-										'value' => 'CHtml::link(CHtml::encode($data->key_description), Yii::app()->createUrl("apiconnections/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
+										'value' => 'CHtml::link(CHtml::encode($data->key_description), Yii::app()->createUrl("apiConnections/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
 							     ),
 									array(
 							      'name'=>'key_public',
 										'header'=>'key_public',
 										'type'=>'raw',
-										'value' => 'CHtml::link(CHtml::encode($data->key_public), Yii::app()->createUrl("apiconnections/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
+										'value' => 'CHtml::link(CHtml::encode($data->key_public), Yii::app()->createUrl("apiConnections/update")."&id=".CHtml::encode(crypt::Encrypt($data->id_api)))',
 							     ),
 									 // 'key_private',
 									 array(
