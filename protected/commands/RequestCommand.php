@@ -105,21 +105,61 @@ class RequestCommand extends CConsoleCommand
 				$this->log("Response of server is: ".$result);
 
 				$analisi = CJSON::decode($result);
-				//$this->log("Analisi is: <pre>".print_r($analisi,true)."</pre>");
+				$this->log("Analisi is: <pre>".print_r($analisi,true)."</pre>");
 
 				if (is_array($analisi)){
 					if (!isset($analisi['errors'])){
-						if ($analisi['event']['group']['total_items'][0] == 'ok'){
-							$this->log('Payload sent correctly!');
-							// imposto il sent to true
-							$request->sent = 1;
-							$request->save();
-							break;
-						}else{
-							$this->log('Payload sent, but cannot trigger event!');
-							$request->sent = 1;
-							$request->save();
-							break;
+						foreach ($analisi['event'] as $id => $group)
+						{
+							$this->log("Group array is: <pre>".print_r($group,true)."</pre>");
+							if (is_array($group)){
+								foreach ($group as $id => $rules){
+									$this->log("Rules array is: <pre>".print_r($rules,true)."</pre>");
+									if (is_array($rules)){
+										foreach ($rules as $id => $rule){
+											$this->log("Rule array is: <pre>".print_r($rule,true)."</pre>");
+											if ($rule == 'ok'){
+												$this->log('Payload sent correctly!');
+												// imposto il sent to true
+												$request->sent = 1;
+												$request->save();
+												break;
+											} else {
+												$this->log('Payload sent, but cannot trigger event!');
+												$request->sent = 1;
+												$request->save();
+												break;
+											}
+										}
+									} else {
+										if ($rules == 'ok'){
+											$this->log('Payload sent correctly!');
+											// imposto il sent to true
+											$request->sent = 1;
+											$request->save();
+											break;
+										} else {
+											$this->log('Payload sent, but cannot trigger event!');
+											$request->sent = 1;
+											$request->save();
+											break;
+										}
+									}
+								}
+							} else {
+								if ($group == 'ok'){
+									$this->log('Payload sent correctly!');
+									// imposto il sent to true
+									$request->sent = 1;
+									$request->save();
+									break;
+								} else {
+									$this->log('Payload sent, but cannot trigger event!');
+									$request->sent = 1;
+									$request->save();
+									break;
+								}
+							}
 						}
 					}else{
 						$this->log('Payload sent, but there was an error:'. $analisi['errors']['detail']);
