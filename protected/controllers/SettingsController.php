@@ -133,7 +133,7 @@ class SettingsController extends Controller
 			{
 				// echo '<pre class="text-light">'.print_r($_POST,true).'</pre>';
 				// echo '<pre class="text-light">'.print_r($_POST,true).'</pre>';
-				 // exit;
+				//  exit;
 				$model->attributes=$_POST['SettingsWebappForm'];
 				// echo '<pre>'.print_r($model->attributes,true).'</pre>';
 				// exit;

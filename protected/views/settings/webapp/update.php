@@ -3,7 +3,8 @@ $tabList['GDPR']   = array('id'=>'gdpr','content'=>$this->renderPartial('webapp/
 $tabList['Server host']   = array('id'=>'serverhost','content'=>$this->renderPartial('webapp/_serverhost',array('model'=>$model),TRUE));
 $tabList['POA & Token']   = array('id'=>'poa','content'=>$this->renderPartial('webapp/_poa',array('model'=>$model),TRUE));
 
-$tabList['Socials oAuth']   = array('id'=>'socials','content'=>$this->renderPartial('webapp/_socials',array('model'=>$model),TRUE));
+$tabList['Bolt Socials oAuth']   = array('id'=>'socials','content'=>$this->renderPartial('webapp/_bolt-socials',array('model'=>$model),TRUE));
+$tabList['MegaPay Socials oAuth']  = array('id'=>'megapay','content'=>$this->renderPartial('webapp/_megapay-socials',array('model'=>$model),TRUE));
 $tabList['Vapid Push']   = array('id'=>'vapid','content'=>$this->renderPartial('webapp/_vapid',array('model'=>$model, ),TRUE));
 $tabList['Google reCaptcha2']   = array('id'=>'recaptcha','content'=>$this->renderPartial('webapp/_recaptcha',array('model'=>$model, ),TRUE));
 

@@ -18,14 +18,46 @@ $attributes[] = array(
 //VISIBILI ALL'ADMIN
 if (Yii::app()->user->objUser['privilegi'] == 20){
 		$attributes[] = array(
-							'label'=>'Smart Contract POA (token)',
-							'value'=>(isset($model->poa_contractAddress) ? $model->poa_contractAddress : '')
-						);
+			'label'=>'Smart Contract POA (token)',
+			'value'=>(isset($model->poa_contractAddress) ? $model->poa_contractAddress :  null)
+		);
 		$attributes[] = array(
-							'label'=>'Scadenza Invoice',
-							'value'=>$model->poa_expiration . ' (min)',
-						);
+			'label'=>'Scadenza Invoice',
+			'value'=>isset($model->poa_expiration) ? $model->poa_expiration . ' (min)' : null,
+		);
+		$attributes[] = array(
+			'label'=>'Chain Id',
+			'value'=>isset($model->poa_chainId) ? $model->poa_chainId : null,
+		);
+		$attributes[] = array(
+			'label'=>'block Explorer',
+			'value'=>isset($model->poa_blockexplorer) ? $model->poa_blockexplorer : null,
+		);
+		$attributes[] = array(
+			'label'=>'Scadenza invoice',
+			'value'=>isset($model->poa_expiration) ? $model->poa_expiration : null,
+		);
+		$attributes[] = array(
+			'label'=>'Nodo Sealer',
+			'value'=>isset($model->poa_sealerAccount) ? $model->poa_sealerAccount : null,
+		);
 
+		$attributes[] = array(
+			'label'=>'Google Oauth',
+			'value'=>isset($model->GoogleOauthClientId) ? $model->GoogleOauthClientId : null,
+		);
+		$attributes[] = array(
+			'label'=>'Facebook Oauth',
+			'value'=>isset($model->facebookAppID) ? $model->facebookAppID : null,
+		);
+		$attributes[] = array(
+			'label'=>'Bolt Telegram Oauth',
+			'value'=>isset($model->telegramBotName) ? $model->telegramBotName : null,
+		);
+		$attributes[] = array(
+			'label'=>'Megapay Telegram Oauth',
+			'value'=>isset($model->MegapayTelegramBotName) ? $model->MegapayTelegramBotName : null,
+		);
 
 }
 

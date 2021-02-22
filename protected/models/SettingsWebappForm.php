@@ -28,6 +28,8 @@ class SettingsWebappForm extends CFormModel
 	public $facebookAppVersion;
 	public $telegramBotName;
 	public $telegramToken;
+	public $MegapayTelegramBotName;
+	public $MegapayTelegramToken;
 
 	//Exchange
 	public $id_exchange;
@@ -127,7 +129,7 @@ class SettingsWebappForm extends CFormModel
 			array('VapidPublic,VapidSecret,reCaptcha2PublicKey,reCaptcha2PrivateKey', 'length', 'max'=>150),
 			array('PAYPAL_CLIENT_ID,PAYPAL_CLIENT_SECRET,PAYPAL_MODE', 'length', 'max'=>150),
 			array('fileSystemStorageKey,RulesEngineApiKeyPublic,RulesEngineApiKeySecret,RulesEngineApiKeyURL', 'length', 'max'=>150),
-			array('GoogleOauthClientId,GoogleOauthClientSecret,facebookAppID,facebookAppVersion,telegramBotName,telegramToken', 'length', 'max'=>150),
+			array('GoogleOauthClientId,GoogleOauthClientSecret,facebookAppID,facebookAppVersion,telegramBotName,telegramToken,MegapayTelegramBotName,MegapayTelegramToken', 'length', 'max'=>150),
 
 		);
 	}
