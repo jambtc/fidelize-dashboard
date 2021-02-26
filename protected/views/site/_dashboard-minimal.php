@@ -8,7 +8,7 @@
 		],
 		1 => (object)[
 			'icon'=>'fas fa-credit-card',
-			'link'=>'pagamenti/index',
+			'link'=>'site/dash',
 			'descri'=>'Pagamenti',
 			'color'=>'c2',
 		],
