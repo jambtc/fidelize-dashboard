@@ -116,7 +116,12 @@ class ApiconnectionsController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('ApiConnections');
+		$criteria=new CDbCriteria();
+		$criteria->compare('id_user',Yii::app()->user->objUser['id_user'],false);
+		$dataProvider=new CActiveDataProvider('ApiConnections', array(
+			'criteria'=>$criteria,
+		));
+
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
