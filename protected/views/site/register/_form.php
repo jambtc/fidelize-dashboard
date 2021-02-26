@@ -84,7 +84,7 @@ $script = <<<JS
     var formName = 'UsersRegisterForm'; //da cambiare in base al Form di appartenenza
     var cap = document.querySelector('#'+formName+'_cap');
     var provincia = document.querySelector('#'+formName+'_provincia');
-    var corporate = document.querySelector('#'+formName+'_corporate');
+    // var corporate = document.querySelector('#'+formName+'_corporate');
     var checkpassword = document.querySelector('#submit_button');
 
     //provincia.addEventListener('change', function(){
@@ -130,10 +130,15 @@ $script = <<<JS
     });
 
 
+    // var corporate = document.querySelector('#'+formName+'_corporate');
+    // corporate.addEventListener('change', function(){
+		//     $('.persona_giuridica').toggle();
+    // });
 
-    corporate.addEventListener('change', function(){
-		$('.persona_giuridica').toggle();
-    });
+    $('#'+formName+'_corporate option:eq(1)').prop('selected', true);
+    $('#'+formName+'_corporate').prop('readonly', true);
+
+
 
     //verifico password wallet immessa
     checkpassword.addEventListener('click', function(e){
@@ -218,9 +223,9 @@ Yii::app()->clientScript->registerScript('script', $script);
 				<div class="card-body">
 					<div class="form-group">
 						<?php echo $form->labelEx($model,'Persona Giuridica'); ?>
-						<?php echo $form->dropDownList($model,'corporate',$listCorporate,array('class'=>'form-control'));	?>
+						<?php echo $form->dropDownList($model,'corporate',$listCorporate,array('class'=>'form-control','readonly'=>true));	?>
 					</div>
-					<div class="form-group persona_giuridica" style="display:<?php echo $visible_field; ?>;" id="FormDenomination">
+					<div class="form-group persona_giuridica"  id="FormDenomination">
 						<?php echo $form->label($model,'denomination'); ?>
 						<?php echo $form->textField($model,'denomination',array('size'=>60,'maxlength'=>250,'class'=>'form-control')); ?>
 						<?php echo $form->error($model,'denomination',array('class'=>'alert alert-danger')); ?>
@@ -287,7 +292,7 @@ Yii::app()->clientScript->registerScript('script', $script);
 			<?php echo $form->error($model,'consenso_termini',array('class'=>'alert alert-danger')); ?>
 
             <!-- TERMINI UTILIZZO POS -->
-            <div class="input-group persona_giuridica" style="display:<?php echo $visible_field; ?>;">
+            <div class="input-group persona_giuridica" >
 				<p><?php echo $form->checkBox($model,'consenso_pos'); ?><i>&nbsp;Accetto i <a href="<?php echo Yii::app()->createUrl('site/termOfUsePos');?>"  target="_blank">Termini e le Condizioni di utilizzo</a> del POS.</i></p>
 			</div>
 			<?php echo $form->error($model,'consenso_pos',array('class'=>'alert alert-danger')); ?>

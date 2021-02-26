@@ -364,7 +364,7 @@ class SiteController extends Controller
 					}else{
 						$model->id_users_type = 5; //UTENTE CON PROFILO SOCIO quando si registra (DIVENTA 2 QUANDO E' COMMERCIANTE)
 					}
-					$model->id_carica = 5; //UTENTE SOCIO ORDINARIO quando si registra da solo
+					// $model->id_carica = 5; //UTENTE SOCIO ORDINARIO quando si registra da solo
 					#echo "<pre>".print_r($model->attributes,true)."</pre>";
 					#exit;
 

@@ -79,7 +79,7 @@ class UsersRegisterForm extends CActiveRecord
 			//array('password', 'compare', 'compareAttribute'=>'repeat_password'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_user, id_users_type, id_carica, email, password, name, surname, activation_code, status_activation_code, telefono', 'safe', 'on'=>'search'),
+			array('id_user, id_users_type, email, password, name, surname, activation_code, status_activation_code, telefono', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -108,7 +108,6 @@ class UsersRegisterForm extends CActiveRecord
 		return array(
 			'id_user' => 'Id User',
 			'id_users_type' => 'Id Users Type',
-			'id_carica' => 'Carica',
 			'email' => 'Email',
 			'password' => 'Password',
 			'name' => 'Nome',
@@ -148,7 +147,6 @@ class UsersRegisterForm extends CActiveRecord
 
 		$criteria->compare('id_user',$this->id_user);
 		$criteria->compare('id_users_type',$this->id_users_type);
-		$criteria->compare('id_carica',$this->id_carica,true);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('name',$this->name,true);
@@ -160,7 +158,7 @@ class UsersRegisterForm extends CActiveRecord
 		$criteria->compare('city',$this->city,true);
 		$criteria->compare('country',$this->country,true);
 		$criteria->compare('cap',$this->cap,true);
-		$criteria->compare('telefono',$this->telefono,true);
+		// $criteria->compare('telefono',$this->telefono,true);
 		$criteria->compare('activation_code',$this->activation_code);
 		$criteria->compare('status_activation_code',$this->status_activation_code);
 
