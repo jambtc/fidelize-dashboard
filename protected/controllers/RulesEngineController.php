@@ -150,7 +150,7 @@ class RulesEngineController extends Controller
 
     //eseguo lo script che si occuperà in background di verificare lo stato dell'evento appena creata...
     $cmd = Yii::app()->basePath.DIRECTORY_SEPARATOR.'yiic request --id='.crypt::Encrypt($model->id_request);
-    $ssh = Utils::execInBackground($cmd);
+    $ssh = Seclib::execInBackground($cmd);
 
     // if there is an error...
     if (is_array($ssh) && isset($ssh['error'])){

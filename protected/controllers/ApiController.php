@@ -426,7 +426,7 @@ class ApiController extends Controller
 
   		//eseguo lo script che si occuperà in background di verificare lo stato dell'invoice appena creata...
   		$cmd = Yii::app()->basePath.DIRECTORY_SEPARATOR.'yiic send --id='.crypt::Encrypt($tokens->id_token);
-  		Utils::execInBackground($cmd);
+  		Seclib::execInBackground($cmd);
 
   	 	//adesso posso uscire
   	 	$send_json = array(
