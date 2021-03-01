@@ -1,5 +1,5 @@
 <?php
-$URL = 'https://'.$_SERVER['HTTP_HOST'].Yii::app()->createUrl('site/loginquota');
+$URL = 'https://'.$_SERVER['HTTP_HOST'].Yii::app()->createUrl('site/index');
 ?>
 <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'>
 <table style="font-family:Roboto; border-spacing:0px;padding: 20px; background-color: #F8F9FA; border-collapse:separate;" summary="o_mail_notification" width="100%" cellpadding="0" border="0" bgcolor="#F8F9FA">

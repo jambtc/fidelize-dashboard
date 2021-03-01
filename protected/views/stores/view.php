@@ -38,10 +38,10 @@ $buttonLoadCss = '<a class="float-right" href="'.$checkoutCss.'"><button class="
 										'value'=>ComuniItaliani::model()->findByAttributes(array('id_comune'=>$model->city))->citta
 									),
 									'county',
-									array(
-										'label'=>'ID Negozio',
-										'value'=>$model->bps_storeid
-									)
+									// array(
+									// 	'label'=>'ID Negozio',
+									// 	'value'=>$model->bps_storeid
+									// )
 
 									//'nation',
 
