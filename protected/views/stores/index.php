@@ -51,16 +51,6 @@ $actionURL = Yii::app()->createUrl('stores/create');
 								'columns' => array(
 									array(
 							            'name'=>'id_merchant',
-										// 'value'=> '(Merchants::model()->findByPk($data->id_merchant)) === null)
-										// 				? "non trovato" :
-										// 				CHtml::link(
-										// 					CHtml::encode(
-										// 						Merchants::model()->findByPk($data->id_merchant)->denomination),
-										// 						Yii::app()->createUrl("stores/view")."&id=".CHtml::encode(
-										// 							crypt::Encrypt($data->id_store)
-										// 						)
-										// 					)
-										// 				)',
 										'visible' => $visible,
 										'value' => '(Merchants::model()->findByPk($data->id_merchant) === null) ? "" : CHtml::link(
 														Merchants::model()->findByPk($data->id_merchant)->denomination,
@@ -76,10 +66,10 @@ $actionURL = Yii::app()->createUrl('stores/create');
 											: CHtml::link(CHtml::encode($data->denomination), Yii::app()->createUrl("stores/view")."&id=".CHtml::encode(crypt::Encrypt($data->id_store)))',
 							        ),
 									array(
-							            'name'=>'bps_storeid',
+							            //'name'=>'bps_storeid',
 										'header'=>'ID Negozio',
-							            'value'=>'$data->bps_storeid',
-										'visible' => $visible,
+							            'value'=>'crypt::Encrypt($data->id_store)',
+										//'visible' => $visible,
 							        ),
 									array(
 										'name'=>'',

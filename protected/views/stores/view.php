@@ -30,6 +30,10 @@ $buttonLoadCss = '<a class="float-right" href="'.$checkoutCss.'"><button class="
 								//'htmlOptions' => array('class' => 'table table-borderless table-striped '),
 								'data'=>$model,
 								'attributes'=>array(
+									[
+										'label' => 'ID Negozio',
+										'value' => crypt::Encrypt($model->id_store),
+									],
 									'denomination',
 									'address',
 										'cap',

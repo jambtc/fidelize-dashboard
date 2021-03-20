@@ -53,6 +53,10 @@ class ApiconnectionsController extends Controller
 	 */
 	public function actionCreate()
 	{
+
+		// echo '<pre>'.print_r($_POST,true).'</pre>';
+		//exit;
+
 		$model=new ApiConnections;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -61,9 +65,19 @@ class ApiconnectionsController extends Controller
 		if(isset($_POST['ApiConnections']))
 		{
 			$model->attributes=$_POST['ApiConnections'];
-			$model->key_secret = md5($model->key_public.$model->key_secret);
-			#echo "<pre>".print_r($_POST,true)."</pre>";
-			#exit;
+			// echo "<pre>".print_r($model->attributes,true)."</pre>";
+
+			// $generatedHash = base64_encode(hash_hmac('sha256', $raw_post_data, $secret, true));
+
+			$model->key_secret = crypt::Encrypt($model->key_secret);
+			$merchants = Merchants::model()->findByPk($model->id_merchant);
+			if (null !== $merchants)
+				$model->id_user = $merchants->id_user;
+
+
+
+			// echo "<pre>".print_r($model->attributes,true)."</pre>";
+			// exit;
 			if($model->save())
 				$this->redirect(array('index'));
 		}
@@ -117,7 +131,9 @@ class ApiconnectionsController extends Controller
 	public function actionIndex()
 	{
 		$criteria=new CDbCriteria();
-		$criteria->compare('id_user',Yii::app()->user->objUser['id_user'],false);
+		if (Yii::app()->user->objUser['privilegi'] != 20){
+			$criteria->compare('id_user',Yii::app()->user->objUser['id_user'],false);
+		}
 		$dataProvider=new CActiveDataProvider('ApiConnections', array(
 			'criteria'=>$criteria,
 		));

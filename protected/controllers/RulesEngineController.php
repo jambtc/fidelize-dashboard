@@ -69,47 +69,47 @@ class RulesEngineController extends Controller
     $save = new Save;
     if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Start Plugin log.');
 
-		// Questa opzione abilita i wrapper URL per fopen (file_get_contents), in modo da potere accedere ad oggetti URL come file
-		ini_set("allow_url_fopen", true);
+	// Questa opzione abilita i wrapper URL per fopen (file_get_contents), in modo da potere accedere ad oggetti URL come file
+	ini_set("allow_url_fopen", true);
 
-		$raw_post_data = file_get_contents('php://input');
-		if (false === $raw_post_data) $save->WriteLog('dashboard','RulesEngine','send','Could not read from the php://input stream or invalid IPN received.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','php://input stream is valid.');
+	$raw_post_data = file_get_contents('php://input');
+	if (false === $raw_post_data) $save->WriteLog('dashboard','RulesEngine','send','Could not read from the php://input stream or invalid IPN received.',true);
+	else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','php://input stream is valid.');
 
-		if (false === $_POST) $save->WriteLog('dashboard','RulesEngine','save','Could not read from the $_POST stream or invalid IPN received.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST stream is valid.');
+	if (false === $_POST) $save->WriteLog('dashboard','RulesEngine','save','Could not read from the $_POST stream or invalid IPN received.',true);
+	else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST stream is valid.');
 
     if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Received _POST is:<pre>'.print_r($_POST,true).'</pre>');
 
     // VERIFICO CHE NEL POST CI SIA L'EVENT
     if (!isset($_POST['event'])) $save->WriteLog('dashboard','RulesEngine','save','$_POST event is not valid.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST event is valid.');
+	else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','$_POST event is valid.');
 
     // VERIFICO CHE I DATI INVIATI SIANO CORRETTI
     Yii::import('ext.APIKeys');
     $ipn = (object) APIKeys::check();
 
-		if (true === empty($ipn)) $save->WriteLog('dashboard','RulesEngine','save','Could not decode the JSON payload from Server.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Json payload and api keys are valid.');
+	if (true === empty($ipn)) $save->WriteLog('dashboard','RulesEngine','save','Could not decode the JSON payload from Server.',true);
+	else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Json payload and api keys are valid.');
 
     $payload = (object) $ipn->event;
     if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Payload is: <pre>'.print_r($payload,true).'</pre>');
 
-		if (true === empty($payload->id)) $save->WriteLog('dashboard','RulesEngine','save','Invalid Server payment notification message received - did not receive invoice ID.',true);
-		else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Ipn id is valid.');
+	if (true === empty($payload->id)) $save->WriteLog('dashboard','RulesEngine','save','Invalid Server payment notification message received - did not receive invoice ID.',true);
+	else if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Ipn id is valid.');
 
     // CARICO le impostazioni
     $settings=Settings::load();
-		if($settings===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Settings does not exist.',true);
+	if($settings===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Settings does not exist.',true);
 
     // Load client data
     $client = WalletsBolt::model()->findByAttributes(['id_user'=>$payload->customer_id]);
-    if($client===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Client Wallet does not exist.',true);
+    //if($client===null) $save->WriteLog('dashboard','RulesEngine','save','The requested Client Wallet does not exist.',true);
 
-    if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Client wallet address is: '.$client->wallet_address);
+    //if (!PRODUCTION) $save->WriteLog('dashboard','RulesEngine','save','Client wallet address is: '.$client->wallet_address);
 
     // aggiungo il wallet address
-    $payload->client_address = $client->wallet_address;
+    //$payload->client_address = $client->wallet_address;
     $identifier = explode(":",$payload->id);
 
     if (!(isset($identifier[1]))) $payload->cart_id = $payload->id;

@@ -83,9 +83,9 @@ class RequestCommand extends CConsoleCommand
 		while(true){
 			if ($request->sent == 0){ //se il valore è 0 proseguo
 				// CARICO le impostazioni
-		    $settings=Settings::load();
+		    	$settings=Settings::load();
 				if($settings===null)
-		      $this->log('Error. The requested Settings page does not exist.',true);
+		      		$this->log('Error. The requested Settings page does not exist.',true);
 
 				// Send the new Payload to Rules Engine Server
 				// - import class

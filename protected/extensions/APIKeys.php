@@ -71,6 +71,8 @@ class APIKeys
         $sign = base64_encode(hash_hmac('sha512', hash('sha256', $event->nonce . $postdata, true), base64_decode($model->key_secret), true));
 
         // compare the two signatures
+        // è da guardare questa funzione perchè la risposta dovrebbe essere
+        // = 0 se sono uguali....
         if (strcmp($sign, $headers['API-Sign']) !== 0){
           $save->WriteLog('dashboard','ipn','APIKeys','Api keys are invalid!');
           die (json_encode(['success'=>false,'message'=>'Api keys are invalid!']));

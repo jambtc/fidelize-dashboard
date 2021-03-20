@@ -15,6 +15,8 @@
  */
 class ApiConnections extends CActiveRecord
 {
+    public $id_merchant;
+
     /**
      * @return string the associated database table name
      */
@@ -32,7 +34,7 @@ class ApiConnections extends CActiveRecord
         // will receive user inputs.
         return array(
             array('id_user, key_public, key_secret, key_description', 'required'),
-            array('id_user', 'numerical', 'integerOnly'=>true),
+            array('id_user, id_merchant', 'numerical', 'integerOnly'=>true),
             array('key_public', 'length', 'max'=>50),
             array('key_secret, key_description', 'length', 'max'=>200),
             // The following rule is used by search().
