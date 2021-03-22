@@ -14,8 +14,8 @@
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
 ));
-// $criteria=new CDbCriteria();
-// $criteria->compare('deleted',0,false);
+$criteria=new CDbCriteria();
+$criteria->compare('deleted',0,false);
 
 if (Yii::app()->user->objUser['privilegi'] == 20 && $model->isNewRecord){
 	$merchants=Merchants::model()->findAll($criteria);
